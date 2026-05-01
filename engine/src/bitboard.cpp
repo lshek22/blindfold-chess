@@ -1,7 +1,8 @@
 #include "bitboard.h"
+#include "enums.h"
 #include <stdio.h>
 
-void print_bitboard(U64 board) {
+void print_bitboard(Bitboard board) {
     for (int row = 0; row < 8; row++) {
         for (int col = 0; col < 8; col++) {
             int square = row * 8 + col;
