@@ -9,3 +9,4 @@ inline void pop_bit(Bitboard &board, int square) {get_bit(board, square) ? board
 
 void print_bitboard(Bitboard board);
 
+int count_bits(Bitboard bitboard);

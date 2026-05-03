@@ -15,7 +15,26 @@ const Bitboard not_ab_file = 18229723555195321596ULL;
 
 extern Bitboard pawn_attacks[2][64];
 
+extern Bitboard knight_attacks[64];
+
+extern Bitboard king_attacks[64];
+
+
+
 
 Bitboard generate_pawn_attacks(int side, int square);
 
-void pawn_precalc_table();
+Bitboard generate_knight_attacks(int side, int square);
+
+Bitboard generate_king_attacks(int side, int square);
+
+Bitboard generate_bishop_attacks(int square);
+
+Bitboard generate_rook_attacks(int square);
+
+Bitboard bishop_attacks_innit(int square, Bitboard blockers);
+
+Bitboard rook_attacks_innit(int square, Bitboard blockers);
+
+
+void leaper_precalc_table();

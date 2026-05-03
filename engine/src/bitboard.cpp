@@ -10,4 +10,9 @@ void print_bitboard(Bitboard board) {
         }
         printf("\n");
     }
+    printf("\n");
+}
+
+int count_bits(Bitboard bitboard) {
+    return __builtin_popcountll(bitboard);
 }

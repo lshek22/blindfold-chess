@@ -5,8 +5,18 @@
 
 int main(){
     Bitboard bitboard = 0ULL;
-    pawn_precalc_table();
+    leaper_precalc_table();
     //print_bitboard( generate_pawn_attacks(black, e4));
-    for(int square= 0; square<64 ; square++)
-        print_bitboard(pawn_attacks[black][square]);
+    //for(int square= 0; square<64 ; square++)
+    //    print_bitboard(generate_rook_attacks(square));
+   
+    Bitboard blockers = 0ULL;
+    set_bit(blockers, g4);
+    set_bit(blockers, e3);
+    set_bit(blockers, c4);
+    set_bit(blockers, g1);
+    set_bit(blockers, e1);
+    set_bit(blockers, c1);
+    print_bitboard(blockers);
+    printf("bit count: %d\n", count_bits(blockers));
 }
