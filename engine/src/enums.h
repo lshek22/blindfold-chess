@@ -1,7 +1,7 @@
 #pragma once
 
 
-enum Color{white, black, both};
+enum Color{ white, black, both };
 
 enum Square{
    a8, b8, c8, d8, e8, f8, g8, h8,
@@ -11,5 +11,28 @@ enum Square{
    a4, b4, c4, d4, e4, f4, g4, h4,
    a3, b3, c3, d3, e3, f3, g3, h3,
    a2, b2, c2, d2, e2, f2, g2, h2,
-   a1, b1, c1, d1, e1, f1, g1, h1
+   a1, b1, c1, d1, e1, f1, g1, h1, no_sq
 };
+
+enum Slider{ rook, bishop };
+
+
+/*
+
+    
+   0001    1  white king can castle to the king side
+   0010    2  white king can castle to the queen side
+   0100    4  black king can castle to the king side
+   1000    8  black king can castle to the queen side
+
+   examples
+
+   1111       both sides an castle both directions
+   1001       black king => queen side
+              white king => king side
+
+*/
+
+enum Castle { wk = 1, wq = 2, bk = 4, bq = 8 };
+
+enum Piece { P, N, B, R, Q, K, p, n, b, r, q, k };
