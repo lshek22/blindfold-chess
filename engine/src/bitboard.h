@@ -27,6 +27,8 @@ inline bool get_bit(Bitboard board, int square) {return board & (1ULL << square)
 inline void set_bit(Bitboard &board, int square) {board |= (1ULL << square);}
 inline void pop_bit(Bitboard &board, int square) {get_bit(board, square) ? board ^= (1ULL << square): 0;}
 
+extern const char *square_to_coordinates[64];
+
 
 
 /*

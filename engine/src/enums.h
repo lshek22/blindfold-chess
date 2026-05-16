@@ -36,3 +36,5 @@ enum Slider{ rook, bishop };
 enum Castle { wk = 1, wq = 2, bk = 4, bq = 8 };
 
 enum Piece { P, N, B, R, Q, K, p, n, b, r, q, k };
+
+enum Capture { all_moves, only_captures };

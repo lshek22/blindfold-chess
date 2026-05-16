@@ -195,7 +195,7 @@ void parse_fen(char *fen) {
                 set_bit(bitboards[piece], square);
 
 
-                *fen++; 
+                fen++; 
             }
 
             if (*fen >= '0' && *fen <= '9') {
@@ -214,25 +214,19 @@ void parse_fen(char *fen) {
                 }
 
                 file += offset;
-                *fen++;
+                fen++;
             }
 
             if (*fen == '/') {
-                *fen++;
+                fen++;
             }
 
         }
     }
 
-    /*
-    
-        check *fen is uncesessary fen is enough
-    
-    
-    */
 
 
-    *fen++;
+    fen++;
 
     if (*fen == 'w') {
         side = white;
@@ -252,11 +246,11 @@ void parse_fen(char *fen) {
             case '-' : break;
         }
 
-        *fen++;
+        fen++;
     }
    
 
-    *fen++;
+    fen++;
 
     if (*fen != '-') {
         int file = fen[0] -'a';
@@ -266,6 +260,8 @@ void parse_fen(char *fen) {
     } else {
         enpassant = no_sq;
     }
+
+    printf("parse fen enpassant value: %d\n\n", enpassant);
 
     for (int piece = P; piece <= K; piece++) {
         occupancies[white] |= bitboards[piece];
