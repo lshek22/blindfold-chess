@@ -1,4 +1,7 @@
 #include "movegen.h"
+#include "attack_tables.h"
+#include "bitboard.h"
+#include "enums.h"
 
 
 const int castling_rights[64] = {
@@ -53,11 +56,16 @@ void print_attacked_squares(int side) {
 
 void print_move(Move move) {
     int promoted = MoveBuilder::get_promoted(move);
+
+
+    if (promoted)
+        printf("%s%s%c\n", square_to_coordinates[MoveBuilder::get_source(move)],
+                           square_to_coordinates[MoveBuilder::get_target(move)],
+                           promoted_pieces[promoted]);
+    else
+        printf("%s%s\n", square_to_coordinates[MoveBuilder::get_source(move)],
+                           square_to_coordinates[MoveBuilder::get_target(move)]);
     
-    printf("%s%s%c", 
-           square_to_coordinates[MoveBuilder::get_source(move)],
-           square_to_coordinates[MoveBuilder::get_target(move)],
-           promoted ? promoted_pieces[promoted] : ' ');
 }
 
 
@@ -89,4 +97,65 @@ void print_move_list(const MoveList& move_list) {
     }
 
     printf("\n\n    Total number of moves: %d\n\n", move_list.get_count());
+}
+
+
+int64_t get_time_ms() {
+    auto now = std::chrono::steady_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch());
+    return duration.count();
+}
+
+
+long nodes;
+
+void perft_test(int depth) {
+    printf("\n     Performance test\n\n");
+    MoveList move_list;
+   
+    move_list.clear();
+   
+    
+    generate_moves(move_list);
+  
+
+    long start = get_time_ms();
+
+    
+    for (int move_count = 0; move_count <move_list.get_count(); move_count++) {   
+        
+        Move move = move_list.get_move(move_count);
+
+        BoardCopy backup;
+
+        if (!make_move(move, all_moves)) {
+            continue;
+        }
+
+        long cummulative_nodes = nodes;
+
+        
+        perft_driver(depth - 1);
+
+        long old_nodes = nodes - cummulative_nodes;
+
+        int source_square = MoveBuilder::get_source(move);
+        int target_square = MoveBuilder::get_target(move);
+        int promoted = MoveBuilder::get_promoted(move);
+
+        backup.restore();
+
+
+        printf("     move: %s%s%c  nodes: %ld\n", square_to_coordinates[source_square],
+                                                 square_to_coordinates[target_square],
+                                                 promoted ? promoted_pieces[promoted] : ' ',
+                                                 old_nodes);
+        
+
+
+    }
+
+    printf("\n    Depth: %d\n", depth);
+    printf("    Nodes: %ld\n", nodes);
+    printf("     Time: %ld\n\n", get_time_ms() - start);
 }

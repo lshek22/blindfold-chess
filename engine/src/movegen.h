@@ -5,10 +5,16 @@
 #include "enums.h"
 #include "attack_tables.h"
 #include <cstring>
+#include <chrono>
 
 char get_promoted_char(int piece);
 
 extern const int castling_rights[64];
+
+extern long nodes;
+
+
+int64_t get_time_ms();
 
 
 /*
@@ -553,3 +559,33 @@ static inline int make_move(Move move, int move_flag) {
     }
     return -1;
 }
+
+static inline void perft_driver(int depth) {
+    if (depth == 0) {
+        nodes++;
+        return;
+    }
+    
+    MoveList move_list;
+    move_list.clear();
+    
+    generate_moves(move_list);
+    
+    for (int move_count = 0; move_count <move_list.get_count(); move_count++) {   
+        
+        Move move = move_list.get_move(move_count);
+
+        BoardCopy backup;
+
+        if (!make_move(move, all_moves)) {
+            continue;
+        }
+        
+        perft_driver(depth - 1);
+        
+      
+        backup.restore();
+    }
+}
+
+void perft_test(int depth);
