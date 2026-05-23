@@ -3,7 +3,9 @@
 #include "src/attack_tables.h"
 #include "src/movegen.h"
 #include "src/uci.h"
-#include "src/evaluation.h"
+// #include "src/evaluation.h"
+#include "src/search.h"
+
 
 #include <stdio.h>
 #include <string>
@@ -14,12 +16,13 @@ using namespace std;
 int main(){
     innit_all();
 
-    string a = "rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 0 1 ";
+    //string a = "rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 0 1 ";
 
-    //uci_loop();
+    // uci_loop();
 
-    parse_fen(a.data());
+    parse_fen(tricky_position.data());
     print_board();
-    printf("Score: %d\n", evaluate());
 
+    search_position(6);
+    
 }

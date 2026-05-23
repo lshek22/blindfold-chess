@@ -97,6 +97,11 @@ class MoveList {
         
         int get_count() const { return count; }
         Move get_move(int index) const { return moves[index]; }
+        void swap_moves(int current_move, int next_move) {
+            int temp_move = moves[current_move];
+            moves[current_move] = moves[next_move];
+            moves[next_move] = temp_move; 
+        }
 };
 
 void print_move(Move move);
@@ -405,36 +410,50 @@ static inline void generate_moves(MoveList& move_list) {
 
 }
 
-struct BoardCopy {
-    Bitboard bb[12];
-    Bitboard occ[3];
-    int side;
-    int ep;
-    int cas;
+#define copy_board()                                                      \
+    Bitboard bitboards_copy[12], occupancies_copy[3];                          \
+    int side_copy, enpassant_copy, castle_copy;                           \
+    memcpy(bitboards_copy, bitboards, 96);                                \
+    memcpy(occupancies_copy, occupancies, 24);                            \
+    side_copy = side, enpassant_copy = enpassant, castle_copy = castle;   \
 
 
-    BoardCopy() {
-        for (int i = 0; i < 12; i++) bb[i] = bitboards[i];
-        for (int i = 0; i < 3; i++) occ[i] = occupancies[i];
+#define take_back()                                                       \
+    memcpy(bitboards, bitboards_copy, 96);                                \
+    memcpy(occupancies, occupancies_copy, 24);                            \
+    side = side_copy, enpassant = enpassant_copy, castle = castle_copy;   \
+
+// struct BoardCopy {
+//     Bitboard bb[12];
+//     Bitboard occ[3];
+//     int side;
+//     int ep;
+//     int cas;
+
+
+//     BoardCopy() {
+//         for (int i = 0; i < 12; i++) bb[i] = bitboards[i];
+//         for (int i = 0; i < 3; i++) occ[i] = occupancies[i];
         
-        side = ::side; 
-        ep = enpassant;
-        cas = castle;
-    }
+//         side = ::side; 
+//         ep = enpassant;
+//         cas = castle;
+//     }
 
-    void restore() const {
-        for (int i = 0; i < 12; i++) bitboards[i] = bb[i];
-        for (int i = 0; i < 3; i++) occupancies[i] = occ[i];
+//     void restore() const {
+//         for (int i = 0; i < 12; i++) bitboards[i] = bb[i];
+//         for (int i = 0; i < 3; i++) occupancies[i] = occ[i];
         
-        ::side = side;
-        enpassant = ep;
-        castle = cas;
-    }
-};
+//         ::side = side;
+//         enpassant = ep;
+//         castle = cas;
+//     }
+// };
 
 static inline int make_move(Move move, int move_flag) {
     if (move_flag == all_moves) {
-        BoardCopy backup;
+        //BoardCopy backup;
+        copy_board();
 
         int source_square = MoveBuilder::get_source(move);
         int target_square = MoveBuilder::get_target(move);
@@ -479,19 +498,7 @@ static inline int make_move(Move move, int move_flag) {
 
 
         
-        /*
         
-            BUG
-        
-        */
-
-
-        /*
-        
-            d7 pawn kills at c6 for some fucking reason
-            check black pawn move generation
-
-        */
 
         // printf("enpassant before: %d\n", enpassant_flag);
         enpassant = no_sq;
@@ -544,7 +551,8 @@ static inline int make_move(Move move, int move_flag) {
         side ^= 1;
 
         if (is_square_attacked((side == white) ? get_lsb_index(bitboards[k]) : get_lsb_index(bitboards[K]), side)) {
-            backup.restore();
+            //backup.restore();
+            take_back();
             return 0;
         } else {
             return 1;
@@ -552,7 +560,8 @@ static inline int make_move(Move move, int move_flag) {
 
     } else {
         if (MoveBuilder::get_capture(move)) {
-            make_move(move, all_moves);
+            //make_move(move, all_moves);
+            return make_move(move, all_moves);
         } else { 
             return 0;
         } 
@@ -575,7 +584,8 @@ static inline void perft_driver(int depth) {
         
         Move move = move_list.get_move(move_count);
 
-        BoardCopy backup;
+        //BoardCopy backup;
+        copy_board();
 
         if (!make_move(move, all_moves)) {
             continue;
@@ -584,7 +594,8 @@ static inline void perft_driver(int depth) {
         perft_driver(depth - 1);
         
       
-        backup.restore();
+        //backup.restore();
+        take_back();
     }
 }
 

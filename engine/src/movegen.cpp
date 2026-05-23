@@ -59,11 +59,11 @@ void print_move(Move move) {
 
 
     if (promoted)
-        printf("%s%s%c\n", square_to_coordinates[MoveBuilder::get_source(move)],
+        printf("%s%s%c", square_to_coordinates[MoveBuilder::get_source(move)],
                            square_to_coordinates[MoveBuilder::get_target(move)],
                            promoted_pieces[promoted]);
     else
-        printf("%s%s\n", square_to_coordinates[MoveBuilder::get_source(move)],
+        printf("%s%s", square_to_coordinates[MoveBuilder::get_source(move)],
                            square_to_coordinates[MoveBuilder::get_target(move)]);
     
 }
@@ -126,7 +126,8 @@ void perft_test(int depth) {
         
         Move move = move_list.get_move(move_count);
 
-        BoardCopy backup;
+        //BoardCopy backup;
+        copy_board();
 
         if (!make_move(move, all_moves)) {
             continue;
@@ -143,7 +144,8 @@ void perft_test(int depth) {
         int target_square = MoveBuilder::get_target(move);
         int promoted = MoveBuilder::get_promoted(move);
 
-        backup.restore();
+        //backup.restore();
+        take_back();
 
 
         printf("     move: %s%s%c  nodes: %ld\n", square_to_coordinates[source_square],

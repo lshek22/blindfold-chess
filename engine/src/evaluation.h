@@ -3,6 +3,8 @@
 #include "attack_tables.h"
 #include "movegen.h"
 
+#define max_ply 64
+
 /*
     ♙ =   100   = ♙
     ♘ =   300   = ♙ * 3
@@ -32,6 +34,35 @@ extern const int king_score[64];
 
 // mirror positional score tables for opposite side
 extern const int mirror_score[128];
+
+static int mvv_lva[12][12] = {
+ 	105, 205, 305, 405, 505, 605,  105, 205, 305, 405, 505, 605,
+	104, 204, 304, 404, 504, 604,  104, 204, 304, 404, 504, 604,
+	103, 203, 303, 403, 503, 603,  103, 203, 303, 403, 503, 603,
+	102, 202, 302, 402, 502, 602,  102, 202, 302, 402, 502, 602,
+	101, 201, 301, 401, 501, 601,  101, 201, 301, 401, 501, 601,
+	100, 200, 300, 400, 500, 600,  100, 200, 300, 400, 500, 600,
+
+	105, 205, 305, 405, 505, 605,  105, 205, 305, 405, 505, 605,
+	104, 204, 304, 404, 504, 604,  104, 204, 304, 404, 504, 604,
+	103, 203, 303, 403, 503, 603,  103, 203, 303, 403, 503, 603,
+	102, 202, 302, 402, 502, 602,  102, 202, 302, 402, 502, 602,
+	101, 201, 301, 401, 501, 601,  101, 201, 301, 401, 501, 601,
+	100, 200, 300, 400, 500, 600,  100, 200, 300, 400, 500, 600
+};
+
+extern int killer_moves[2][max_ply];
+
+extern int history_moves[12][64];
+
+extern int pv_length[max_ply];
+
+extern int pv_table[max_ply][max_ply];
+
+extern int follow_pv, score_pv;
+
+const int full_depth_moves = 4;
+const int reduction_limit = 3;
 
 
 static inline int evaluate() {
@@ -66,7 +97,9 @@ static inline int evaluate() {
                 case k: score -= king_score[mirror_score[square]]; break;
             }
 
-            pop_bit(bitboard, get_lsb_index(bitboard));
+            square = get_lsb_index(bitboard);
+
+            pop_bit(bitboard, square);
         }
     }
 

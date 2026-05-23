@@ -261,7 +261,7 @@ void parse_fen(char *fen) {
         enpassant = no_sq;
     }
 
-    printf("parse fen enpassant value: %d\n\n", enpassant);
+    //printf("parse fen enpassant value: %d\n\n", enpassant);
 
     for (int piece = P; piece <= K; piece++) {
         occupancies[white] |= bitboards[piece];
@@ -275,6 +275,6 @@ void parse_fen(char *fen) {
     occupancies[both] |= occupancies[black];
 
 
-    printf("fen : '%s'\n", fen);
+    //printf("fen : '%s'\n", fen);
 
 }
