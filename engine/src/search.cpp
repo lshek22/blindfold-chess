@@ -1,5 +1,6 @@
 #include "search.h"
 #include <iostream>
+#include "tt.h"
 
 int ply;
 
@@ -10,7 +11,7 @@ void search_position(int depth) {
 
     
     nodes = 0;
-    //ply = 0;
+    stopped = 0;
     follow_pv = 0, score_pv = 0;
 
 
@@ -19,11 +20,13 @@ void search_position(int depth) {
     memset(pv_table, 0, sizeof(pv_table));
     memset(pv_length, 0, sizeof(pv_length));
 
+    
     int alpha = -50000;
     int beta = 50000;
 
     for (int current_depth = 1; current_depth <= depth; current_depth++) {
 
+    if(stopped == 1) break;
             
     follow_pv = 1;
 

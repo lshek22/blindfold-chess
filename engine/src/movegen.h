@@ -6,6 +6,7 @@
 #include "attack_tables.h"
 #include <cstring>
 #include <chrono>
+#include "hashing.h"
 
 char get_promoted_char(int piece);
 
@@ -50,6 +51,63 @@ namespace MoveBuilder {
     inline constexpr int get_castling(Move move) { return (move) & 0x800000; }
     
 }
+
+
+// namespace HashKeys {
+//     Bitboard piece_keys[12][64];
+
+//     Bitboard enpassant_keys[64];
+
+//     inline Bitboard castle_keys[16];
+
+//     Bitboard side_key;
+
+//     void init_random_keys() {
+//         state = 1804289383;
+
+//         for (int piece = P; piece <= k; piece++) {
+//             for (int square = 0; square < 64; square++) {
+//                 piece_keys[piece][square] = get_random_U64_number();
+//             }
+//         }
+
+//         for (int square = 0; square < 64; square++) {
+//             enpassant_keys[square] = get_random_U64_number();
+//         }
+//         for (int index = 0; index < 16; index++){
+//             castle_keys[index] = get_random_U64_number();
+//         }
+    
+//         HashKeys::side_key = get_random_U64_number();
+//     }
+
+//     Bitboard generate_hash_key() {
+//         Bitboard final_key = 0ULL;
+    
+//         Bitboard bitboard;
+        
+//         for (int piece = P; piece <= k; piece++) {
+//             bitboard = bitboards[piece];
+            
+//             while (bitboard) {
+//                 int square = get_lsb_index(bitboard);
+                
+//                 final_key ^= piece_keys[piece][square];
+                
+//                 pop_bit(bitboard, square);
+//             }
+//         }
+        
+//         if (enpassant != no_sq) {
+//             final_key ^= enpassant_keys[enpassant];
+//         }
+//         final_key ^= castle_keys[castle];
+        
+//         if (side == black) final_key ^= HashKeys::side_key;
+        
+//         return final_key;
+//     }
+// }
 
 
 
@@ -411,17 +469,19 @@ static inline void generate_moves(MoveList& move_list) {
 }
 
 #define copy_board()                                                      \
-    Bitboard bitboards_copy[12], occupancies_copy[3];                          \
+    Bitboard bitboards_copy[12], occupancies_copy[3];                     \
     int side_copy, enpassant_copy, castle_copy;                           \
     memcpy(bitboards_copy, bitboards, 96);                                \
     memcpy(occupancies_copy, occupancies, 24);                            \
     side_copy = side, enpassant_copy = enpassant, castle_copy = castle;   \
+    Bitboard hash_key_copy = hash_key;                                         \
 
 
 #define take_back()                                                       \
     memcpy(bitboards, bitboards_copy, 96);                                \
     memcpy(occupancies, occupancies_copy, 24);                            \
     side = side_copy, enpassant = enpassant_copy, castle = castle_copy;   \
+    hash_key = hash_key_copy;                                             \
 
 // struct BoardCopy {
 //     Bitboard bb[12];
@@ -450,6 +510,8 @@ static inline void generate_moves(MoveList& move_list) {
 //     }
 // };
 
+
+
 static inline int make_move(Move move, int move_flag) {
     if (move_flag == all_moves) {
         //BoardCopy backup;
@@ -467,6 +529,10 @@ static inline int make_move(Move move, int move_flag) {
         pop_bit(bitboards[piece], source_square);
         set_bit(bitboards[piece], target_square);
 
+        hash_key ^= HashKeys::piece_keys[piece][source_square];
+        hash_key ^= HashKeys::piece_keys[piece][target_square];
+        
+
         if (capture) {
             int start_piece, end_piece;
 
@@ -481,6 +547,7 @@ static inline int make_move(Move move, int move_flag) {
             for (int bb_piece = start_piece; bb_piece <= end_piece; bb_piece++) {
                 if (get_bit(bitboards[bb_piece], target_square)) {
                     pop_bit(bitboards[bb_piece], target_square);
+                    hash_key ^= HashKeys::piece_keys[bb_piece][target_square];
                     break;
                 }
             }
@@ -488,24 +555,62 @@ static inline int make_move(Move move, int move_flag) {
 
         if (promoted) {
             //pop_bit(bitboards[piece], target_square);
-            pop_bit(bitboards[(side == white) ? P : p], target_square);
+            // pop_bit(bitboards[(side == white) ? P : p], target_square);
+            // set_bit(bitboards[promoted], target_square);
+
+            if (side == white) {
+                pop_bit(bitboards[P], target_square);
+                
+                hash_key ^= HashKeys::piece_keys[P][target_square];
+            } else {
+                pop_bit(bitboards[p], target_square);
+                
+                hash_key ^= HashKeys::piece_keys[p][target_square];
+            }
+            
             set_bit(bitboards[promoted], target_square);
+            
+            hash_key ^= HashKeys::piece_keys[promoted][target_square];
         }
 
         if (enpassant_flag) {
             (side == white) ? (pop_bit(bitboards[p], target_square + 8)) : (pop_bit(bitboards[P], target_square - 8));
+
+            if (side == white) {
+                pop_bit(bitboards[p], target_square + 8);
+                
+                hash_key ^= ::HashKeys::piece_keys[p][target_square + 8];
+            } else {
+                pop_bit(bitboards[P], target_square - 8);
+                
+                hash_key ^= HashKeys::piece_keys[P][target_square - 8];
+            }
+
+
         }
 
 
         
         
+
+        if (enpassant != no_sq) hash_key ^= HashKeys::enpassant_keys[enpassant];
 
         // printf("enpassant before: %d\n", enpassant_flag);
         enpassant = no_sq;
         // printf("enpassant after: %d\n", enpassant_flag);
 
         if (double_pawn_push) {
-            (side == white) ? (enpassant = target_square + 8) : (enpassant = target_square - 8);
+            //(side == white) ? (enpassant = target_square + 8) : (enpassant = target_square - 8);
+        
+            if (side == white) {
+                enpassant = target_square + 8;
+                
+                hash_key ^= HashKeys::enpassant_keys[target_square + 8];
+            } else {
+                enpassant = target_square - 8;
+                
+                hash_key ^= HashKeys::enpassant_keys[target_square - 8];
+            }
         }
 
 
@@ -515,25 +620,41 @@ static inline int make_move(Move move, int move_flag) {
                 case (g1):
                     pop_bit(bitboards[R], h1);
                     set_bit(bitboards[R], f1);
+
+                    hash_key ^= HashKeys::piece_keys[R][h1];
+                    hash_key ^= HashKeys::piece_keys[R][f1];
                     break;
                 case (c1):
                     pop_bit(bitboards[R], a1);
                     set_bit(bitboards[R], d1);
+
+                    hash_key ^= HashKeys::piece_keys[R][a1];
+                    hash_key ^= HashKeys::piece_keys[R][d1];
                     break;
                 case (g8):
                     pop_bit(bitboards[r], h8);
                     set_bit(bitboards[r], f8);
+
+                    hash_key ^= HashKeys::piece_keys[r][h8];
+                    hash_key ^= HashKeys::piece_keys[r][f8];
                     break;
                 case (c8):
                     pop_bit(bitboards[r], a8);
                     set_bit(bitboards[r], d8);
+
+                    hash_key ^= HashKeys::piece_keys[r][a8];
+                    hash_key ^= HashKeys::piece_keys[r][d8];
                     break;
                     
             }
         }
 
+        hash_key ^= HashKeys::castle_keys[castle];
+
         castle &= castling_rights[source_square];
         castle &= castling_rights[target_square];
+
+        hash_key ^= HashKeys::castle_keys[castle];
 
         memset(occupancies, 0ULL, 24);
 
@@ -549,6 +670,12 @@ static inline int make_move(Move move, int move_flag) {
         occupancies[both] |= occupancies[black];
 
         side ^= 1;
+        hash_key ^= HashKeys::side_key;
+
+
+        
+
+
 
         if (is_square_attacked((side == white) ? get_lsb_index(bitboards[k]) : get_lsb_index(bitboards[K]), side)) {
             //backup.restore();
@@ -596,6 +723,9 @@ static inline void perft_driver(int depth) {
       
         //backup.restore();
         take_back();
+
+
+        
     }
 }
 

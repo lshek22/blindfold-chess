@@ -2,8 +2,102 @@
 #include "attack_tables.h"
 #include <iostream>
 #include "search.h"
+#include <unistd.h>
+#include "tt.h"
+
+int quit = 0;
+
+int movestogo = 30;
+
+int movetime = -1;
+
+int search_time = -1;
+
+int inc = 0;
+
+int starttime = 0;
+
+int stoptime = 0;
+
+int timeset = 0;
+
+int stopped = 0;
 
 
+int input_waiting()
+{
+    
+    fd_set readfds;
+    struct timeval tv;
+    FD_ZERO (&readfds);
+    FD_SET (fileno(stdin), &readfds);
+    tv.tv_sec=0; tv.tv_usec=0;
+    select(16, &readfds, 0, 0, &tv);
+
+    return (FD_ISSET(fileno(stdin), &readfds));
+
+}
+
+
+void read_input()
+{
+    int bytes;
+    
+  
+    char input[256] = "", *endc;
+
+  
+    if (input_waiting())
+    {
+        
+        stopped = 1;
+        
+    
+        do
+        {
+           
+            bytes=read(fileno(stdin), input, 256);
+        }
+        
+       
+        while (bytes < 0);
+        
+        
+        endc = strchr(input,'\n');
+        
+      
+        if (endc) *endc=0;
+        
+        
+        if (strlen(input) > 0)
+        {
+          
+            if (!strncmp(input, "quit", 4))
+            {
+                  
+                quit = 1;
+            }
+
+       
+            else if (!strncmp(input, "stop", 4))    {
+                
+                quit = 1;
+            }
+        }   
+    }
+}
+
+
+void communicate() {
+	
+    if(timeset == 1 && get_time_ms() > stoptime) {
+		
+		stopped = 1;
+	}
+	
+    
+	read_input();
+}
 
 
 int parse_move(string move_string) {
@@ -92,68 +186,89 @@ void parse_position(std::string_view command) {
 
 }
 
+// void parse_go(std::string_view command) {
+//     int depth = 6; 
+    
+//     size_t depth_pos = command.find("depth");
+    
+//     if (depth_pos != std::string_view::npos) {
+//         std::string_view depth_part = command.substr(depth_pos + 5);
+        
+//         std::istringstream depth_stream{std::string(depth_part)};
+        
+//         if (!(depth_stream >> depth)) {
+//             depth = 6; 
+//         }
+//     }
+    
+//     search_position(depth);
+//     //printf("depth: %d\n", depth);
+// }
+
+
 void parse_go(std::string_view command) {
-    int depth = 6; 
-    
-    size_t depth_pos = command.find("depth");
-    
-    if (depth_pos != std::string_view::npos) {
-        std::string_view depth_part = command.substr(depth_pos + 5);
-        
-        std::istringstream depth_stream{std::string(depth_part)};
-        
-        if (!(depth_stream >> depth)) {
-            depth = 6; 
-        }
+    int depth = -1;
+    size_t pos = std::string_view::npos;
+
+    // Reset clock tracking defaults per search command
+    inc = 0;
+    search_time = -1;
+    movetime = -1;
+    movestogo = 30;
+    timeset = 0;
+
+    if (command.find("infinite") != std::string_view::npos) {
+        // Handle infinite
     }
-    
+
+    // Modern C++ equivalent: search using command.find()
+    // command.data() + pos gives you a pointer to the start of that substring
+    if (side == black && (pos = command.find("binc")) != std::string_view::npos)
+        inc = atoi(command.data() + pos + 5);
+
+    if (side == white && (pos = command.find("winc")) != std::string_view::npos)
+        inc = atoi(command.data() + pos + 5);
+
+    if (side == white && (pos = command.find("wtime")) != std::string_view::npos)
+        search_time = atoi(command.data() + pos + 6);
+
+    if (side == black && (pos = command.find("btime")) != std::string_view::npos)
+        search_time = atoi(command.data() + pos + 6);
+
+    if ((pos = command.find("movestogo")) != std::string_view::npos)
+        movestogo = atoi(command.data() + pos + 10);
+
+    if ((pos = command.find("movetime")) != std::string_view::npos)
+        movetime = atoi(command.data() + pos + 9);
+
+    if ((pos = command.find("depth")) != std::string_view::npos)
+        depth = atoi(command.data() + pos + 6);
+
+    // Time calculation math...
+    if (movetime != -1) {
+        search_time = movetime;
+        movestogo = 1;
+    }
+
+    starttime = get_time_ms();
+
+    if (search_time != -1) {
+        timeset = 1;
+        search_time /= movestogo;
+        search_time -= 50; 
+        if (search_time < 0) search_time = 10; 
+        stoptime = starttime + search_time + inc;
+    }
+
+    if (depth == -1)
+        depth = 64;
+
+    printf("time:%d start:%d stop:%d depth:%d timeset:%d\n",
+           search_time, starttime, stoptime, depth, timeset);
+
     search_position(depth);
-    //printf("depth: %d\n", depth);
 }
 
-
-// void parse_go(std::string_view command) {
-//     int depth = 4;  // fallback depth
-    
-//     // check for explicit depth
-//     size_t depth_pos = command.find("depth");
-//     if (depth_pos != std::string_view::npos) {
-//         std::istringstream depth_stream{std::string(command.substr(depth_pos + 5))};
-//         if (!(depth_stream >> depth)) depth = 4;
-//         search_position(depth);
-//         return;
-//     }
-
-//     // handle time-based: wtime/btime/movetime
-//     int movetime = -1;
-//     int wtime = -1, btime = -1, movestogo = 40;
-
-//     auto parse_int = [&](std::string_view cmd, const char* token) -> int {
-//         size_t pos = cmd.find(token);
-//         if (pos == std::string_view::npos) return -1;
-//         std::istringstream s{std::string(cmd.substr(pos + strlen(token)))};
-//         int val; s >> val; return val;
-//     };
-
-//     movetime  = parse_int(command, "movetime ");
-//     wtime     = parse_int(command, "wtime ");
-//     btime     = parse_int(command, "btime ");
-//     movestogo = parse_int(command, "movestogo ");
-//     if (movestogo == -1) movestogo = 40;
-
-//     if (movetime != -1) {
-//         // fixed time per move — just use depth for now
-//         depth = 5;
-//     } else if (wtime != -1 || btime != -1) {
-//         // allocate time simply: pick depth based on available time
-//         int time = (side == white) ? wtime : btime;
-//         if      (time > 60000) depth = 6;
-//         else if (time > 10000) depth = 5;
-//         else                   depth = 4;
-//     }
-
-//     search_position(depth);
-// }
 
 
 void uci_loop() {
@@ -197,6 +312,7 @@ void uci_loop() {
         else if (command.substr(0, 10) == "ucinewgame") 
         {
             parse_position("position startpos");
+            clear_hash_table();
         }
         else if (command.substr(0, 2) == "go") 
         {

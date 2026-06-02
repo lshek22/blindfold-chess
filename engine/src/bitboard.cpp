@@ -3,6 +3,9 @@
 #include <stdio.h>
 #include "attack_tables.h"
 #include <cstring>
+#include "hashing.h"
+#include "tt.h"
+
 
 
 string empty_board = "8/8/8/8/8/8/8/8 w - - ";
@@ -15,6 +18,8 @@ string cmk_position = "r2q1rk1/ppp2ppp/2n1bn2/2b1p3/3pP3/3P1NPP/PPP1NPB1/R1BQ1RK
 int side = -1;
 int enpassant = no_sq;
 int castle = 0;
+
+Bitboard hash_key;
 
 char ascii_pieces[] = "PNBRQKpnbrqk";
 
@@ -58,6 +63,9 @@ void innit_all(){
     init_sliders_attacks(bishop);
     init_sliders_attacks(rook);
     //set_up_board();
+    HashKeys::init_random_keys();
+
+    clear_hash_table();
 }
 
 void print_bitboard(Bitboard board) {
@@ -102,6 +110,7 @@ void print_board() {
                                            (castle & wq) ? 'Q' : '-',
                                            (castle & bk) ? 'k' : '-',
                                            (castle & bq) ? 'q' : '-');
+    printf("     Hash Key:  %lx\n\n", hash_key);
 
 }
 
@@ -273,6 +282,8 @@ void parse_fen(char *fen) {
 
     occupancies[both] |= occupancies[white];
     occupancies[both] |= occupancies[black];
+
+    hash_key = HashKeys::generate_hash_key();
 
 
     //printf("fen : '%s'\n", fen);

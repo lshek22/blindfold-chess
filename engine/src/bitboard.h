@@ -133,6 +133,8 @@ extern int side;
 extern int enpassant;
 extern int castle;
 
+extern Bitboard hash_key;
+
 
 void print_bitboard(Bitboard board);
 

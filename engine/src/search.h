@@ -4,6 +4,8 @@
 #include "attack_tables.h"
 #include "movegen.h"
 #include "evaluation.h"
+#include "uci.h"
+#include "tt.h"
 
 extern int ply;
 
@@ -104,7 +106,15 @@ static inline void sort_moves(MoveList& move_list) {
 
 static inline int quiescence(int alpha, int beta) {
 
+    if ((nodes & 2047) == 0) {
+        communicate();
+    }
+
     nodes++;
+
+    if (ply > max_ply - 1) {
+        return evaluate();
+    }
 
     int evaluation = evaluate();
 
@@ -147,12 +157,17 @@ static inline int quiescence(int alpha, int beta) {
         //backup.restore();
         take_back();
 
-        if (score >= beta) {
-            return beta;
-        }
+        if(stopped == 1) return 0;
+
+
+        
 
         if (score > alpha) {
             alpha = score;
+         
+            if (score >= beta) {
+                return beta;
+            }
 
         }
     }
@@ -162,6 +177,18 @@ static inline int quiescence(int alpha, int beta) {
 }
 
 static inline int negamax (int alpha, int beta, int depth) {
+
+    int score;
+
+    int hash_flag = hash_flag_alpha;
+
+    if (ply && (score = read_hash_entry(alpha, beta, depth)) != no_hash_entry) {
+        return score;
+    }
+
+    if ((nodes & 2047) == 0) {
+        communicate();
+    }
 
 
     pv_length[ply] = ply;
@@ -187,11 +214,24 @@ static inline int negamax (int alpha, int beta, int depth) {
     if (depth >= 3 && in_check == 0 && ply) {
         copy_board();
 
-        side ^= 1;
-        enpassant = no_sq;
+        ply++;
 
-        int score = -negamax(-beta, -beta+1, depth - 1 - 2);
+        if (enpassant != no_sq) {
+            hash_key ^= HashKeys::enpassant_keys[enpassant];
+        }
+
+        enpassant = no_sq;
+        side ^= 1;
+
+        hash_key ^= HashKeys::side_key;
+
+        score = -negamax(-beta, -beta+1, depth - 1 - 2);
+        
+        ply--;
         take_back();
+        
+
+        if (stopped == 1) return 0;
 
         if (score >= beta) {
             return beta;
@@ -227,7 +267,7 @@ static inline int negamax (int alpha, int beta, int depth) {
 
         legal_moves++;
 
-        int score = 0;
+     
 
         
             if (moves_searched == 0) {
@@ -266,20 +306,14 @@ static inline int negamax (int alpha, int beta, int depth) {
         //backup.restore();
         take_back();
 
+        if(stopped == 1) return 0;
+
+
         moves_searched++;
 
-        if (score >= beta) {
-
-            if (MoveBuilder::get_capture(move_list.get_move(count)) == 0) {
-
-                killer_moves[1][ply] = killer_moves[0][ply];
-                killer_moves[0][ply] = move_list.get_move(count);
-            }
-
-            return beta;
-        }
 
         if (score > alpha) {
+            hash_flag = hash_flag_exact;
 
             if (MoveBuilder::get_capture(move_list.get_move(count)) == 0) {
 
@@ -296,6 +330,21 @@ static inline int negamax (int alpha, int beta, int depth) {
             }
             pv_length[ply] = pv_length[ply + 1]; 
 
+
+
+            if (score >= beta) {
+
+                record_hash(beta, hash_flag_beta, depth);
+
+                if (MoveBuilder::get_capture(move_list.get_move(count)) == 0) {
+
+                    killer_moves[1][ply] = killer_moves[0][ply];
+                    killer_moves[0][ply] = move_list.get_move(count);
+                }
+
+                return beta;
+            }
+
             
         }
     }
@@ -310,7 +359,7 @@ static inline int negamax (int alpha, int beta, int depth) {
         }
     }
 
-    
+    record_hash(alpha, hash_flag, depth);
 
     return alpha;
 

@@ -5,6 +5,8 @@
 #include "src/uci.h"
 // #include "src/evaluation.h"
 #include "src/search.h"
+#include "src/tt.h"
+
 
 
 #include <stdio.h>
@@ -20,9 +22,13 @@ int main(){
 
     // uci_loop();
 
-    parse_fen(tricky_position.data());
+    parse_fen(start_position.data());
     print_board();
 
-    search_position(6);
-    
+    search_position(10);
+    //generate_hash_key();
+    //perft_test(6);
+
+
+
 }
