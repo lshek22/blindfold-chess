@@ -18,14 +18,18 @@ using namespace std;
 int main(){
     innit_all();
 
-    //string a = "rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 0 1 ";
+    // string a = "8/8/8/P7/p7/8/8/8 w - - ";
 
-    // uci_loop();
+    uci_loop();
 
-    parse_fen(start_position.data());
-    print_board();
+    // parse_fen(a.data());
+    // print_board();
+    // printf("score: %d\n", evaluate());
 
-    search_position(10);
+    // parse_fen(repetitions.data());
+    // print_board();
+
+    // /search_position(10);
     //generate_hash_key();
     //perft_test(6);
 

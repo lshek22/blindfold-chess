@@ -107,7 +107,7 @@ int64_t get_time_ms() {
 }
 
 
-long nodes;
+Bitboard nodes;
 
 void perft_test(int depth) {
     printf("\n     Performance test\n\n");

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/playFragment">
+
+    <fragment
+        android:id="@+id/playFragment"
+        android:name="com.example.blindfoldchess.ui.play.PlayFragment"
+        android:label="Play" />
+
+    <fragment
+        android:id="@+id/trainerFragment"
+        android:name="com.example.blindfoldchess.ui.trainer.TrainerFragment"
+        android:label="Train">
+        <action
+            android:id="@+id/action_trainer_to_question_count"
+            app:destination="@id/questionCountFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/questionCountFragment"
+        android:name="com.example.blindfoldchess.ui.trainer.QuestionCountFragment"
+        android:label="How many questions?">
+        <action
+            android:id="@+id/action_question_count_to_move_count"
+            app:destination="@id/moveCountFragment" />
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/coordinateFragment"
+        android:name="com.example.blindfoldchess.ui.trainer.exercises.CoordinateFragment"
+        android:label="Coordinates" />
+
+    <fragment
+        android:id="@+id/squareColorFragment"
+        android:name="com.example.blindfoldchess.ui.trainer.exercises.SquareColorFragment"
+        android:label="Square Color" />
+
+    <fragment
+        android:id="@+id/historyFragment"
+        android:name="com.example.blindfoldchess.ui.history.HistoryFragment"
+        android:label="History" />
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.example.blindfoldchess.ui.settings.SettingsFragment"
+        android:label="Settings" />
+
+    <fragment
+        android:id="@+id/sameColorFragment"
+        android:name="com.example.blindfoldchess.ui.trainer.exercises.SameColorFragment"
+        android:label="Same Color" />
+
+    <fragment
+        android:id="@+id/sisterSquareFragment"
+        android:name="com.example.blindfoldchess.ui.trainer.exercises.SisterSquareFragment"
+        android:label="Sister Square" />
+
+    <fragment
+        android:id="@+id/sameDiagonalFragment"
+        android:name="com.example.blindfoldchess.ui.trainer.exercises.SameDiagonalFragment"
+        android:label="Same Diagonal" />
+
+    <fragment
+        android:id="@+id/moveCountFragment"
+        android:name="com.example.blindfoldchess.ui.trainer.MoveCountFragment"
+        android:label="Move Count" />
+
+    <fragment
+        android:id="@+id/knightMovesFragment"
+        android:name="com.example.blindfoldchess.ui.trainer.exercises.KnightMovesFragment"
+        android:label="Knight Moves" />
+
+</navigation>

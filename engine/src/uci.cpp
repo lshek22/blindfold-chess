@@ -3,7 +3,8 @@
 #include <iostream>
 #include "search.h"
 #include <unistd.h>
-#include "tt.h"
+#include "movegen.h"
+
 
 int quit = 0;
 
@@ -15,28 +16,44 @@ int search_time = -1;
 
 int inc = 0;
 
-int starttime = 0;
+// int starttime = 0;
 
-int stoptime = 0;
+// int stoptime = 0;
+
+uint64_t starttime = 0;
+uint64_t stoptime = 0;
 
 int timeset = 0;
 
 int stopped = 0;
 
 
-int input_waiting()
-{
-    
-    fd_set readfds;
-    struct timeval tv;
-    FD_ZERO (&readfds);
-    FD_SET (fileno(stdin), &readfds);
-    tv.tv_sec=0; tv.tv_usec=0;
-    select(16, &readfds, 0, 0, &tv);
+#ifdef _WIN32
+    #define WIN32_LEAN_AND_MEAN
+    #define NOGDI
+    #define NOUSER
+    #include <windows.h>
+    #include <conio.h>
 
-    return (FD_ISSET(fileno(stdin), &readfds));
+    int input_waiting() {
+        return _kbhit();
+    }
 
-}
+#else
+    #include <sys/select.h>
+    #include <unistd.h>
+
+    int input_waiting() {
+        fd_set readfds;
+        struct timeval tv;
+        FD_ZERO(&readfds);
+        FD_SET(fileno(stdin), &readfds);
+        tv.tv_sec = 0; tv.tv_usec = 0;
+        select(16, &readfds, 0, 0, &tv);
+        return (FD_ISSET(fileno(stdin), &readfds));
+    }
+
+#endif
 
 
 void read_input()
@@ -178,6 +195,10 @@ void parse_position(std::string_view command) {
             if (move == 0) {
                 break;
             }
+
+            repetition_index++;
+            
+            repetition_table[repetition_index] = hash_key;
             
             make_move(move, all_moves);
         }
@@ -263,7 +284,7 @@ void parse_go(std::string_view command) {
     if (depth == -1)
         depth = 64;
 
-    printf("time:%d start:%d stop:%d depth:%d timeset:%d\n",
+    printf("time:%d start:%ld stop:%ld depth:%d timeset:%d\n",
            search_time, starttime, stoptime, depth, timeset);
 
     search_position(depth);
@@ -308,6 +329,7 @@ void uci_loop() {
         else if (command.substr(0, 8) == "position") 
         {
             parse_position(command);
+            //clear_hash_table();
         }
         else if (command.substr(0, 10) == "ucinewgame") 
         {

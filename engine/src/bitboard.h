@@ -12,7 +12,7 @@ extern string start_position;
 extern string tricky_position;
 extern string killer_position;
 extern string cmk_position;
-
+extern string repetitions;
 
 
 extern char ascii_pieces[];
@@ -26,6 +26,7 @@ void init_char_pieces();
 inline bool get_bit(Bitboard board, int square) {return board & (1ULL << square);}
 inline void set_bit(Bitboard &board, int square) {board |= (1ULL << square);}
 inline void pop_bit(Bitboard &board, int square) {get_bit(board, square) ? board ^= (1ULL << square): 0;}
+inline Bitboard get_bit_mask(int square) { return (1ULL << square); }
 
 extern const char *square_to_coordinates[64];
 
@@ -134,6 +135,9 @@ extern int enpassant;
 extern int castle;
 
 extern Bitboard hash_key;
+
+extern Bitboard repetition_table[1000];
+extern int repetition_index;
 
 
 void print_bitboard(Bitboard board);

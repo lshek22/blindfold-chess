@@ -12,7 +12,7 @@ char get_promoted_char(int piece);
 
 extern const int castling_rights[64];
 
-extern long nodes;
+extern Bitboard nodes;
 
 
 int64_t get_time_ms();

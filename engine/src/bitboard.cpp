@@ -4,7 +4,9 @@
 #include "attack_tables.h"
 #include <cstring>
 #include "hashing.h"
-#include "tt.h"
+#include "search.h"
+#include "evaluation.h"
+
 
 
 
@@ -13,6 +15,7 @@ string start_position = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 
 string tricky_position = "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1 ";
 string killer_position = "rnbqkb1r/pp1p1pPp/8/2p1pP2/1P1P4/3P3P/P1P1P3/RNBQKBNR w KQkq e6 0 1";
 string cmk_position = "r2q1rk1/ppp2ppp/2n1bn2/2b1p3/3pP3/3P1NPP/PPP1NPB1/R1BQ1RK1 b - - 0 9 ";
+string repetitions = "2r3k1/R7/8/1R6/8/8/P4KPP/8 w - - 0 40";
 
 
 int side = -1;
@@ -20,6 +23,11 @@ int enpassant = no_sq;
 int castle = 0;
 
 Bitboard hash_key;
+
+
+Bitboard repetition_table[1000];
+int repetition_index;
+
 
 char ascii_pieces[] = "PNBRQKpnbrqk";
 
@@ -66,6 +74,8 @@ void innit_all(){
     HashKeys::init_random_keys();
 
     clear_hash_table();
+
+    init_evaluation_masks();
 }
 
 void print_bitboard(Bitboard board) {
@@ -191,6 +201,9 @@ void parse_fen(char *fen) {
     side = 0;
     enpassant = no_sq;
     castle = 0;
+
+    repetition_index = 0;
+    memset(repetition_table, 0ULL, sizeof(repetition_table));
 
     for (int rank = 0; rank < 8; rank++) {
         for (int file = 0; file < 8; file++) {
