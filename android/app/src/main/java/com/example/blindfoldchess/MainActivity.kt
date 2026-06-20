@@ -55,16 +55,22 @@ class MainActivity : AppCompatActivity() {
 
 
         val navHostFragment = supportFragmentManager
-
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-
         val navController = navHostFragment.navController
 
-
-
-
-
-        NavigationUI.setupWithNavController(binding.bottomNav, navController)
+        binding.bottomNav.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.gameSetupFragment -> {
+                    navController.popBackStack(R.id.gameSetupFragment, false)
+                    navController.navigate(R.id.gameSetupFragment)
+                    true
+                }
+                else -> {
+                    NavigationUI.onNavDestinationSelected(item, navController)
+                    true
+                }
+            }
+        }
 
     }
 

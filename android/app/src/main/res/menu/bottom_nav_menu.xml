@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/playFragment"
+        android:id="@+id/gameSetupFragment"
         android:icon="@android:drawable/ic_media_play"
         android:title="Play" />
 

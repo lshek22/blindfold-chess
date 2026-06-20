@@ -12,7 +12,6 @@
         android:orientation="vertical"
         android:padding="20dp">
 
-        <!-- Header -->
         <TextView
             android:id="@+id/txtHeader"
             android:layout_width="wrap_content"
@@ -24,14 +23,14 @@
             android:layout_marginTop="12dp"
             android:layout_marginBottom="24dp" />
 
-        <!-- Card: Choose Side -->
+        <!-- Card: Play As -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             app:cardBackgroundColor="#1E1E1E"
             app:cardCornerRadius="16dp"
-            app:cardElevation="2dp"
+            app:cardElevation="0dp"
             app:strokeWidth="0dp">
 
             <LinearLayout
@@ -80,14 +79,14 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Card: Piece Style -->
+        <!-- Card: Piece Visibility -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             app:cardBackgroundColor="#1E1E1E"
             app:cardCornerRadius="16dp"
-            app:cardElevation="2dp"
+            app:cardElevation="0dp"
             app:strokeWidth="0dp">
 
             <LinearLayout
@@ -96,32 +95,35 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="PIECE VISIBILITY"
-                    android:textColor="#8E8E93"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    android:letterSpacing="0.08"
-                    android:layout_marginBottom="8dp" />
-
-                <Spinner
-                    android:id="@+id/pieceStyleSpinner"
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:backgroundTint="#81B64C" />
+                    android:layout_height="wrap_content"
+                    android:hint="Piece Visibility"
+                    app:boxStrokeColor="#81B64C"
+                    app:hintTextColor="#81B64C"
+                    app:endIconTint="#81B64C">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/pieceStyleSpinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="none"
+                        android:textColor="#FFFFFF"
+                        android:textSize="16sp" />
+
+                </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Card: Game Mode -->
+        <!-- Card: Game Variant -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             app:cardBackgroundColor="#1E1E1E"
             app:cardCornerRadius="16dp"
-            app:cardElevation="2dp"
+            app:cardElevation="0dp"
             app:strokeWidth="0dp">
 
             <LinearLayout
@@ -130,21 +132,24 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="GAME VARIANT"
-                    android:textColor="#8E8E93"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    android:letterSpacing="0.08"
-                    android:layout_marginBottom="8dp" />
-
-                <Spinner
-                    android:id="@+id/gameModeSpinner"
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:backgroundTint="#81B64C" />
+                    android:layout_height="wrap_content"
+                    android:hint="Game Variant"
+                    app:boxStrokeColor="#81B64C"
+                    app:hintTextColor="#81B64C"
+                    app:endIconTint="#81B64C">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/gameModeSpinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="none"
+                        android:textColor="#FFFFFF"
+                        android:textSize="16sp" />
+
+                </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
@@ -155,7 +160,7 @@
             android:layout_marginBottom="24dp"
             app:cardBackgroundColor="#1E1E1E"
             app:cardCornerRadius="16dp"
-            app:cardElevation="2dp"
+            app:cardElevation="0dp"
             app:strokeWidth="0dp">
 
             <LinearLayout
@@ -164,21 +169,24 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="ENGINE DIFFICULTY"
-                    android:textColor="#8E8E93"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    android:letterSpacing="0.08"
-                    android:layout_marginBottom="8dp" />
-
-                <Spinner
-                    android:id="@+id/difficultySpinner"
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:backgroundTint="#81B64C" />
+                    android:layout_height="wrap_content"
+                    android:hint="Engine Difficulty"
+                    app:boxStrokeColor="#81B64C"
+                    app:hintTextColor="#81B64C"
+                    app:endIconTint="#81B64C">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/difficultySpinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="none"
+                        android:textColor="#FFFFFF"
+                        android:textSize="16sp" />
+
+                </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 

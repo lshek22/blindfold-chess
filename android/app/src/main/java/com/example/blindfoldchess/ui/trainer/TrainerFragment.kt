@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.blindfoldchess.R
 import com.example.blindfoldchess.databinding.FragmentTrainerBinding
 
@@ -31,9 +31,10 @@ class TrainerFragment : Fragment() {
             Exercise("Same diagonal", "Are these on the same diagonal?", R.id.action_trainer_to_question_count, R.id.sameDiagonalFragment),
             Exercise("Knight moves", "Can a knight jump from A to B?", R.id.action_trainer_to_question_count, R.id.moveCountFragment),
             Exercise("Colliding pieces", "Which square do both pieces attack?",   0, 0),
-            Exercise("Tactics",          "Find the best move",                    R.id.action_trainer_to_tacticsFragment, 0),        )
+            Exercise("Tactics",          "Find the best move",                    R.id.action_trainer_to_tacticsFragment, 0)
+        )
 
-        binding.exercisesRecycler.layoutManager = GridLayoutManager(requireContext(), 2)
+        binding.exercisesRecycler.layoutManager = LinearLayoutManager(requireContext())
         binding.exercisesRecycler.adapter = ExerciseAdapter(exercises) { exercise ->
             if (exercise.navActionId != 0) {
                 val bundle = Bundle().apply {

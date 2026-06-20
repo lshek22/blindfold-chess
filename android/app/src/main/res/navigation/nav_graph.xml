@@ -42,6 +42,34 @@
         <action
             android:id="@+id/action_trainer_to_tacticsFragment"
             app:destination="@id/tacticsFragment" />
+
+        <action
+            android:id="@+id/action_trainer_to_coordinateFragment"
+            app:destination="@id/coordinateFragment" />
+
+        <action
+            android:id="@+id/action_trainer_to_squareColorFragment"
+            app:destination="@id/squareColorFragment" />
+
+        <action
+            android:id="@+id/action_trainer_to_sameColorFragment"
+            app:destination="@id/sameColorFragment" />
+
+        <action
+            android:id="@+id/action_trainer_to_sisterSquareFragment"
+            app:destination="@id/sisterSquareFragment" />
+
+        <action
+            android:id="@+id/action_trainer_to_sameDiagonalFragment"
+            app:destination="@id/sameDiagonalFragment" />
+
+        <action
+            android:id="@+id/action_trainer_to_knightMovesFragment"
+            app:destination="@id/knightMovesFragment" />
+
+        <action
+            android:id="@+id/action_trainer_to_moveCountFragment"
+            app:destination="@id/moveCountFragment" />
     </fragment>
 
     <fragment
