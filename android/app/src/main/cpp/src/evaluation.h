@@ -1,3 +1,5 @@
+#pragma once
+
 #include "bitboard.h"
 #include "enums.h"
 #include "attack_tables.h"
@@ -29,8 +31,11 @@ extern const int bishop_score[64];
 // rook positional score
 extern const int rook_score[64];
 
-// king positional score
-extern const int king_score[64];
+// king positional score for middlegame
+extern const int king_mg_score[64];
+
+// king positional score for endgame
+extern const int king_eg_score[64];
 
 // mirror positional score tables for opposite side
 extern const int mirror_score[128];
@@ -80,3 +85,20 @@ int evaluate();
 void init_evaluation_masks();
 
 Bitboard set_file_rank_mask(int file_number, int rank_number);
+
+static inline bool is_endgame() {
+
+    int white_material = 0;
+    int black_material = 0;
+
+    for (int piece = N; piece <= Q; piece++) {
+        white_material += count_bits(bitboards[piece]);
+    }
+
+    for (int piece = n; piece <= q; piece++) {
+        black_material += count_bits(bitboards[piece]);
+    }
+
+    return white_material <= 2 &&
+           black_material <= 2;
+}

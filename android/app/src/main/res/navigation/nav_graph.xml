@@ -2,12 +2,34 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/playFragment">
+    app:startDestination="@id/gameSetupFragment">
+
+    <fragment
+        android:id="@+id/gameSetupFragment"
+        android:name="com.example.blindfoldchess.ui.play.GameSetupFragment"
+        android:label="Game Options">
+        <action
+            android:id="@+id/action_gameSetupFragment_to_playFragment"
+            app:destination="@id/playFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/playFragment"
         android:name="com.example.blindfoldchess.ui.play.PlayFragment"
-        android:label="Play" />
+        android:label="Play">
+        <argument
+            android:name="selectedSide"
+            app:argType="string"
+            android:defaultValue="white" />
+        <argument
+            android:name="pieceStyle"
+            app:argType="string"
+            android:defaultValue="normal" />
+        <argument
+            android:name="gameVariant"
+            app:argType="string"
+            android:defaultValue="standard" />
+    </fragment>
 
     <fragment
         android:id="@+id/trainerFragment"
@@ -16,6 +38,10 @@
         <action
             android:id="@+id/action_trainer_to_question_count"
             app:destination="@id/questionCountFragment" />
+
+        <action
+            android:id="@+id/action_trainer_to_tacticsFragment"
+            app:destination="@id/tacticsFragment" />
     </fragment>
 
     <fragment
@@ -26,7 +52,6 @@
             android:id="@+id/action_question_count_to_move_count"
             app:destination="@id/moveCountFragment" />
     </fragment>
-
 
     <fragment
         android:id="@+id/coordinateFragment"
@@ -72,5 +97,10 @@
         android:id="@+id/knightMovesFragment"
         android:name="com.example.blindfoldchess.ui.trainer.exercises.KnightMovesFragment"
         android:label="Knight Moves" />
+
+    <fragment
+        android:id="@+id/tacticsFragment"
+        android:name="com.example.blindfoldchess.ui.trainer.TacticsFragment"
+        android:label="Tactics Puzzles" />
 
 </navigation>

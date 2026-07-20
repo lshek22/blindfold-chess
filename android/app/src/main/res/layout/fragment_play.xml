@@ -1,14 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
-    android:orientation="vertical">
+    android:padding="16dp">
 
     <TextView
+        android:id="@+id/txtTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
         android:text="Play"
-        android:textSize="24sp" />
+        android:textSize="24sp"
+        android:layout_marginBottom="16dp"/>
 
-</LinearLayout>
+    <!-- VISUAL INTERFACE WRAPPER -->
+    <com.example.blindfoldchess.ui.common.NormalChessBoardView
+        android:id="@+id/chessBoard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtTitle"
+        android:layout_centerInParent="true" />
+
+    <!-- BLIND TEXT CONSOLE INTERFACE WRAPPER (Hidden by default) -->
+    <LinearLayout
+        android:id="@+id/textGameConsole"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtTitle"
+        android:layout_above="@id/btnToggleTheme"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:visibility="gone"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/txtGameLog"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:text="Game Started.\nType your move using coordinate notation (e.g., e2e4)."
+            android:textSize="16sp"
+            android:gravity="bottom"
+            android:scrollbars="vertical"
+            android:layout_marginBottom="16dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/edtMoveInput"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="f7f8"
+                android:inputType="text"
+                android:maxLength="4"
+                android:minHeight="48dp"/>
+
+            <Button
+                android:id="@+id/btnSubmitMove"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Send" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnToggleTheme"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="16dp"
+        android:text="Toggle Normal Board"
+        android:textSize="16sp"/>
+
+</RelativeLayout>

@@ -69,20 +69,17 @@ class SameColorFragment : Fragment() {
         }
 
         squareA = nextSquare()
-        // make sure B is different from A
         do { squareB = nextSquare() } while (squareB == squareA)
 
         binding.tvSquareA.text = squareName(squareA)
         binding.tvSquareB.text = squareName(squareB)
         binding.tvResult.text = ""
 
-        // re-enable buttons
         binding.btnYes.isEnabled = true
         binding.btnNo.isEnabled  = true
     }
 
     private fun checkAnswer(guessedSameColor: Boolean) {
-        // disable buttons so user can't double tap
         binding.btnYes.isEnabled = false
         binding.btnNo.isEnabled  = false
 

@@ -31,8 +31,7 @@ class TrainerFragment : Fragment() {
             Exercise("Same diagonal", "Are these on the same diagonal?", R.id.action_trainer_to_question_count, R.id.sameDiagonalFragment),
             Exercise("Knight moves", "Can a knight jump from A to B?", R.id.action_trainer_to_question_count, R.id.moveCountFragment),
             Exercise("Colliding pieces", "Which square do both pieces attack?",   0, 0),
-            Exercise("Tactics",          "Find the best move",                    0, 0),
-        )
+            Exercise("Tactics",          "Find the best move",                    R.id.action_trainer_to_tacticsFragment, 0),        )
 
         binding.exercisesRecycler.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.exercisesRecycler.adapter = ExerciseAdapter(exercises) { exercise ->

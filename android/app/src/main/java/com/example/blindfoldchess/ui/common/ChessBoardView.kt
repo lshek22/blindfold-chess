@@ -17,7 +17,7 @@ class ChessBoardView @JvmOverloads constructor(
 
     private val lightSquareColor = Color.parseColor("#F0D9B5")
     private val darkSquareColor  = Color.parseColor("#B58863")
-    private val highlightColor   = Color.parseColor("#8855FF00") // semi-transparent green
+    private val highlightColor   = Color.parseColor("#8855FF00")
 
     private val squarePaint    = Paint(Paint.ANTI_ALIAS_FLAG)
     private val highlightPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -58,11 +58,9 @@ class ChessBoardView @JvmOverloads constructor(
                 val right  = left + squareSize
                 val bottom = top + squareSize
 
-                // draw base square color
                 squarePaint.color = if (isLight) lightSquareColor else darkSquareColor
                 canvas.drawRect(left, top, right, bottom, squarePaint)
 
-                // draw highlight on top if needed
                 if (square in highlightedSquares) {
                     canvas.drawRect(left, top, right, bottom, highlightPaint)
                 }
@@ -77,14 +75,12 @@ class ChessBoardView @JvmOverloads constructor(
         val padding = squareSize * 0.05f
 
         for (i in 0..7) {
-            // file letters along the bottom edge
             canvas.drawText(
                 files[i].toString(),
                 i * squareSize + padding,
                 8 * squareSize - padding,
                 labelPaint
             )
-            // rank numbers along the left edge
             canvas.drawText(
                 (i + 1).toString(),
                 padding,
@@ -103,12 +99,11 @@ class ChessBoardView @JvmOverloads constructor(
             onSquareTapped?.invoke(square)
             return true
         }
-        return true  // must return true on ACTION_DOWN too or UP never fires
+        return true
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        // force the view to be square based on width
         val width = measuredWidth
         setMeasuredDimension(width, width)
     }

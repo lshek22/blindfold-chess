@@ -11,7 +11,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
-import com.example.blindfoldchess.ChessEngine
+import com.example.blindfoldchess.Engine
 import com.example.blindfoldchess.CoordinateTrainer
 import com.example.blindfoldchess.R
 import com.example.blindfoldchess.databinding.ActivityMainBinding

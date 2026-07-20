@@ -305,23 +305,31 @@ void parse_fen(char *fen) {
 
 
 std::string get_board_string() {
-    std::string board_str = "";
+
+    std::string board_str;
+
+    board_str.reserve(64);
 
     for (int square = 0; square < 64; square++) {
-        int piece = -1;
 
-        for (int bb_piece = P; bb_piece <= k; bb_piece++) {
-            if (get_bit(bitboards[bb_piece], square)) {
-                piece = bb_piece;
+        char piece = '.';
+
+        for (int bb_piece = P;
+             bb_piece <= k;
+             bb_piece++) {
+
+            if (get_bit(
+                    bitboards[bb_piece],
+                    square)) {
+
+                piece =
+                        ascii_pieces[bb_piece];
+
                 break;
             }
         }
 
-        if (piece == -1) {
-            board_str += ".";
-        } else {
-            board_str += ascii_pieces[piece];
-        }
+        board_str += piece;
     }
 
     return board_str;

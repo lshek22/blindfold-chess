@@ -26,9 +26,9 @@ project("blindfoldchess")
 # used in the AndroidManifest.xml file.
 add_library(${CMAKE_PROJECT_NAME} SHARED
     # List C/C++ source files with relative paths to this CMakeLists.txt.
+    native-lib.cpp
 
     main.cpp
-
     src/attack_tables.cpp
     src/bitboard.cpp
     src/movegen.cpp
@@ -37,8 +37,6 @@ add_library(${CMAKE_PROJECT_NAME} SHARED
     src/search.cpp
     src/hashing.cpp
     src/tt.cpp
-    src/engine.cpp
-    src/native-lib.cpp
 )
 
 target_compile_options(${CMAKE_PROJECT_NAME} PRIVATE -Ofast)

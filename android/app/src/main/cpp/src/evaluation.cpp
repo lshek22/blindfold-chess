@@ -71,8 +71,8 @@ const int rook_score[64] =
 
 };
 
-// king positional score
-const int king_score[64] = 
+// king positional score for middlegame
+const int king_mg_score[64] =
 {
      0,   0,   0,   0,   0,   0,   0,   0,
      0,   0,   5,   5,   5,   5,   0,   0,
@@ -82,6 +82,18 @@ const int king_score[64] =
      0,   0,   5,  10,  10,   5,   0,   0,
      0,   5,   5,  -5,  -5,   0,   5,   0,
      0,   0,   5,   0, -15,   0,  10,   0
+};
+
+// king positional score for endgame
+const int king_eg_score[64] = {
+        -50,-30,-30,-30,-30,-30,-30,-50,
+        -30,-10,  0,  0,  0,  0,-10,-30,
+        -30,  0, 20, 30, 30, 20,  0,-30,
+        -30,  0, 30, 40, 40, 30,  0,-30,
+        -30,  0, 30, 40, 40, 30,  0,-30,
+        -30,  0, 20, 30, 30, 20,  0,-30,
+        -30,-10,  0,  0,  0,  0,-10,-30,
+        -50,-30,-30,-30,-30,-30,-30,-50
 };
 
 // mirror positional score tables for opposite side
@@ -252,9 +264,15 @@ int evaluate() {
                     score += count_bits(get_queen_attacks(square, occupancies[both]));
                     break;
 
-                case K: 
-                    
-                    score += king_score[square];
+                case K:
+
+                    if (is_endgame()) {
+                        score += king_eg_score[square];
+                    } else {
+                        score += king_mg_score[square];
+                    }
+
+                    //score += king_score[square];
                     
                     if ((bitboards[P] & file_masks[square]) == 0)
                         score -= semi_open_file_score;
@@ -307,9 +325,15 @@ int evaluate() {
                     score -= count_bits(get_queen_attacks(square, occupancies[both]));
                     break;
                 
-                case k: 
-                    
-                    score -= king_score[mirror_score[square]];
+                case k:
+
+                    if (is_endgame()) {
+                        score -= king_eg_score[mirror_score[square]];
+                    } else {
+                        score -= king_mg_score[mirror_score[square]];
+                    }
+
+                    //score -= king_score[mirror_score[square]];
                     
                     if ((bitboards[p] & file_masks[square]) == 0)
                         score += semi_open_file_score;
