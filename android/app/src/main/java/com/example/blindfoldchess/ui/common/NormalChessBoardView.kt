@@ -10,6 +10,7 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import androidx.core.content.ContextCompat
+import com.example.blindfoldchess.R
 
 class NormalChessBoardView @JvmOverloads constructor(
     context: Context,
@@ -17,18 +18,15 @@ class NormalChessBoardView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
-    private val lightSquareColor = Color.parseColor("#F0D9B5")
-    private val darkSquareColor = Color.parseColor("#B58863")
+    private var boardDrawable: Drawable? = null
+
     private val highlightColor = Color.parseColor("#8855FF00")
-
-    private val squarePaint = Paint(Paint.ANTI_ALIAS_FLAG)
-
     private val highlightPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = highlightColor
     }
 
     private val labelPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#333333")
+        color = Color.parseColor("#FFFFFF")
         typeface = Typeface.MONOSPACE
     }
 
@@ -73,27 +71,28 @@ class NormalChessBoardView @JvmOverloads constructor(
 
     private var selectedSquare: Int? = null
 
-    private var isDragging = false
-
-    private var dragX = 0f
-
-    private var dragY = 0f
-
     init {
         loadPieceDrawables()
+        loadBoardTheme()
+    }
+
+    fun loadBoardTheme() {
+        val prefs = context.getSharedPreferences("chess_prefs", Context.MODE_PRIVATE)
+        val themeName = prefs.getString("selected_board_theme", "blue") ?: "blue"
+
+        val resId = context.resources.getIdentifier(themeName, "drawable", context.packageName)
+        boardDrawable = if (resId != 0) ContextCompat.getDrawable(context, resId) else ContextCompat.getDrawable(context, R.drawable.blue)
+        invalidate()
     }
 
     private fun loadPieceDrawables() {
-
         val pieces = listOf(
             "P", "N", "B", "R", "Q", "K",
             "p", "n", "b", "r", "q", "k"
         )
 
         for (piece in pieces) {
-
             val resName = getResourceNameForPiece(piece)
-
             val resId = context.resources.getIdentifier(
                 resName,
                 "drawable",
@@ -142,11 +141,8 @@ class NormalChessBoardView @JvmOverloads constructor(
         oldw: Int,
         oldh: Int
     ) {
-
         super.onSizeChanged(w, h, oldw, oldh)
-
         squareSize = minOf(w, h) / 8f
-
         labelPaint.textSize = squareSize * 0.2f
     }
 
@@ -154,34 +150,32 @@ class NormalChessBoardView @JvmOverloads constructor(
         widthMeasureSpec: Int,
         heightMeasureSpec: Int
     ) {
-
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-
         val width = measuredWidth
-
         setMeasuredDimension(width, width)
     }
-
-
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
+        boardDrawable?.let {
+            it.setBounds(0, 0, width, height)
+            it.draw(canvas)
+        }
+
         for (rank in 0..7) {
             for (file in 0..7) {
-                val displayRank = if (isFlipped) rank else 7 - rank
-                val displayFile = if (isFlipped) 7 - file else file
-
                 val square = rank * 8 + file
-                val left = displayFile * squareSize
-                val top = displayRank * squareSize
-                val right = left + squareSize
-                val bottom = top + squareSize
-
-                squarePaint.color = if ((rank + file) % 2 == 0) lightSquareColor else darkSquareColor
-                canvas.drawRect(left, top, right, bottom, squarePaint)
 
                 if (square in highlightedSquares) {
+                    val displayRank = if (isFlipped) rank else 7 - rank
+                    val displayFile = if (isFlipped) 7 - file else file
+
+                    val left = displayFile * squareSize
+                    val top = displayRank * squareSize
+                    val right = left + squareSize
+                    val bottom = top + squareSize
+
                     canvas.drawRect(left, top, right, bottom, highlightPaint)
                 }
             }

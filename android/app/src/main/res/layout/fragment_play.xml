@@ -13,7 +13,6 @@
         android:textSize="24sp"
         android:layout_marginBottom="16dp"/>
 
-    <!-- VISUAL INTERFACE WRAPPER -->
     <com.example.blindfoldchess.ui.common.NormalChessBoardView
         android:id="@+id/chessBoard"
         android:layout_width="match_parent"
@@ -21,7 +20,6 @@
         android:layout_below="@id/txtTitle"
         android:layout_centerInParent="true" />
 
-    <!-- BLIND TEXT CONSOLE INTERFACE WRAPPER (Hidden by default) -->
     <LinearLayout
         android:id="@+id/textGameConsole"
         android:layout_width="match_parent"
