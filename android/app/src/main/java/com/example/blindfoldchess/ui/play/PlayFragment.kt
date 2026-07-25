@@ -28,6 +28,8 @@ class PlayFragment : Fragment() {
     private val dynamicMoveLog = StringBuilder()
     private var isGameFinished = false
 
+    private var difficulty = "medium"
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -46,8 +48,11 @@ class PlayFragment : Fragment() {
         engine = Engine()
         engine.initEngine()
 
+        difficulty = arguments?.getString("difficulty") ?: "medium"
+
+
         if (gameVariant == "pawns_only") {
-            engine.setPosition("4k3/pppppppp/8/8/8/8/PPPPPPPP/4K3 w KQkq - 0 1")
+            engine.setPosition("4k3/pppppppp/8/8/8/8/PPPPPPPP/4K3 w ---- - 0 1")
         } else {
             engine.setPosition("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
         }
@@ -71,7 +76,7 @@ class PlayFragment : Fragment() {
             if (isGameFinished) return@setOnClickListener
             val inputMove = binding.edtMoveInput.text.toString().trim().lowercase()
             if (inputMove.length == 4) {
-                binding.edtMoveInput.text.clear()
+                binding.edtMoveInput.setText("")
 
                 if (engine.makeMove(inputMove)) {
                     dynamicMoveLog.append("You: $inputMove\n")
@@ -81,7 +86,6 @@ class PlayFragment : Fragment() {
                     if (checkAndHandleGameOver("Engine")) return@setOnClickListener
 
                     lifecycleScope.launch(Dispatchers.Default) {
-                        val searchDepth = if (gameVariant == "pawns_only") 12 else 5
                         val bestMove = engine.getBestMove(searchDepth)
 
                         engine.makeMove(bestMove)
@@ -125,7 +129,6 @@ class PlayFragment : Fragment() {
 
         if (playerSide == "black") {
             lifecycleScope.launch(Dispatchers.Default) {
-                val searchDepth = if (gameVariant == "pawns_only") 12 else 5
                 val bestMove = engine.getBestMove(searchDepth)
                 engine.makeMove(bestMove)
                 withContext(Dispatchers.Main) {
@@ -150,7 +153,6 @@ class PlayFragment : Fragment() {
             if (checkAndHandleGameOver("Engine")) return
 
             lifecycleScope.launch(Dispatchers.Default) {
-                val searchDepth = if (gameVariant == "pawns_only") 12 else 5
                 val bestMove = engine.getBestMove(searchDepth)
                 engine.makeMove(bestMove)
                 withContext(Dispatchers.Main) {
@@ -163,6 +165,14 @@ class PlayFragment : Fragment() {
             }
         }
     }
+    private val searchDepth: Int
+        get() = when (difficulty) {
+            "easy" -> if (gameVariant == "pawns_only") 4 else 2
+            "medium" -> if (gameVariant == "pawns_only") 8 else 5
+            "hard" -> if (gameVariant == "pawns_only") 12 else 8
+            "master" -> if (gameVariant == "pawns_only") 16 else 10
+            else -> 5
+        }
 
 
     private fun checkAndHandleGameOver(checkmatedPlayer: String): Boolean {

@@ -6,5 +6,5 @@ import androidx.room.Query
 @Dao
 interface PuzzleDao {
     @Query("SELECT * FROM local_puzzles WHERE rating >= :userRating ORDER BY rating ASC LIMIT 1")
-    suspend fun getNextLadderPuzzle(userRating: Int): PuzzleEntity?
+    fun getNextLadderPuzzle(userRating: Int): PuzzleEntity?
 }

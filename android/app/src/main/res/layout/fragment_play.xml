@@ -1,18 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#161512"
     android:padding="16dp">
 
+    <!-- Top Navigation Header -->
     <TextView
         android:id="@+id/txtTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:text="Play"
-        android:textSize="24sp"
-        android:layout_marginBottom="16dp"/>
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
+        android:text="Blindfold Chess"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
+    <!-- Chess Board -->
     <com.example.blindfoldchess.ui.common.NormalChessBoardView
         android:id="@+id/chessBoard"
         android:layout_width="match_parent"
@@ -20,58 +27,106 @@
         android:layout_below="@id/txtTitle"
         android:layout_centerInParent="true" />
 
-    <LinearLayout
+    <!-- Text Game Console / Log Section -->
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/textGameConsole"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/txtTitle"
         android:layout_above="@id/btnToggleTheme"
-        android:orientation="vertical"
-        android:gravity="center"
+        android:layout_below="@id/txtTitle"
+        android:layout_marginBottom="12dp"
         android:visibility="gone"
-        android:padding="16dp">
-
-        <TextView
-            android:id="@+id/txtGameLog"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:text="Game Started.\nType your move using coordinate notation (e.g., e2e4)."
-            android:textSize="16sp"
-            android:gravity="bottom"
-            android:scrollbars="vertical"
-            android:layout_marginBottom="16dp"/>
+        app:cardBackgroundColor="#262421"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="4dp"
+        app:strokeWidth="0dp">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="16dp">
 
-            <EditText
-                android:id="@+id/edtMoveInput"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:hint="f7f8"
-                android:inputType="text"
-                android:maxLength="4"
-                android:minHeight="48dp"/>
-
-            <Button
-                android:id="@+id/btnSubmitMove"
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Send" />
-        </LinearLayout>
-    </LinearLayout>
+                android:layout_marginBottom="8dp"
+                android:text="MOVE LOG"
+                android:textColor="#8E8E93"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.08" />
 
-    <Button
+            <TextView
+                android:id="@+id/txtGameLog"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_marginBottom="12dp"
+                android:scrollbars="vertical"
+                android:text="Game Started.\nType your move (e.g. e2e4):"
+                android:textColor="#E0E0E0"
+                android:textSize="15sp" />
+
+            <!-- Command Bar Input -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    app:boxBackgroundColor="#1A1917"
+                    app:boxCornerRadiusBottomEnd="12dp"
+                    app:boxCornerRadiusBottomStart="12dp"
+                    app:boxCornerRadiusTopEnd="12dp"
+                    app:boxCornerRadiusTopStart="12dp"
+                    app:boxStrokeWidth="0dp"
+                    app:hintEnabled="false">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/edtMoveInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:hint="e2e4"
+                        android:inputType="text"
+                        android:maxLength="4"
+                        android:padding="8dp"
+                        android:textColor="#FFFFFF"
+                        android:textColorHint="#666666"
+                        android:textSize="16sp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSubmitMove"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:text="Send"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold"
+                    app:backgroundTint="#81B64C"
+                    app:cornerRadius="12dp" />
+            </LinearLayout>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Bottom Action Button -->
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnToggleTheme"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="52dp"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="8dp"
         android:text="Toggle Normal Board"
-        android:textSize="16sp"/>
+        android:textColor="#FFFFFF"
+        android:textSize="15sp"
+        app:cornerRadius="12dp"
+        app:strokeColor="#363431"
+        app:strokeWidth="1dp" />
 
 </RelativeLayout>

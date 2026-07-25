@@ -24,8 +24,8 @@ class GameSetupFragment : Fragment() {
         val radioGroup = view.findViewById<RadioGroup>(R.id.sideRadioGroup)
         val pieceStyleSpinner = view.findViewById<Spinner>(R.id.pieceStyleSpinner)
         val gameModeSpinner = view.findViewById<Spinner>(R.id.gameModeSpinner)
+        val difficultySpinner = view.findViewById<Spinner>(R.id.difficultySpinner)
         val btnStartGame = view.findViewById<Button>(R.id.btnStartGame)
-
 
         val styleOptions = listOf(
             "Black & White Checkers",
@@ -37,15 +37,18 @@ class GameSetupFragment : Fragment() {
         styleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         pieceStyleSpinner.adapter = styleAdapter
 
-
         val modeOptions = listOf("Standard Full Game", "Kings & Pawns Only")
         val modeAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, modeOptions)
         modeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         gameModeSpinner.adapter = modeAdapter
 
+        val difficultyOptions = listOf("Easy", "Medium", "Hard", "Master")
+        val difficultyAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, difficultyOptions)
+        difficultyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        difficultySpinner.adapter = difficultyAdapter
+
         btnStartGame.setOnClickListener {
             val selectedSide = if (radioGroup.checkedRadioButtonId == R.id.radioWhite) "white" else "black"
-
 
             val pieceStyle = when (pieceStyleSpinner.selectedItem?.toString()) {
                 "All White Checkers" -> "all_white"
@@ -60,10 +63,19 @@ class GameSetupFragment : Fragment() {
                 "standard"
             }
 
+            val difficulty = when (difficultySpinner.selectedItem?.toString()) {
+                "Easy" -> "easy"
+                "Medium" -> "medium"
+                "Hard" -> "hard"
+                "Master" -> "master"
+                else -> "medium"
+            }
+
             val bundle = Bundle().apply {
                 putString("selectedSide", selectedSide)
                 putString("pieceStyle", pieceStyle)
                 putString("gameVariant", gameVariant)
+                putString("difficulty", difficulty)
             }
 
             findNavController().navigate(R.id.action_gameSetupFragment_to_playFragment, bundle)
