@@ -23,7 +23,7 @@
             android:layout_marginTop="12dp"
             android:layout_marginBottom="24dp" />
 
-        <!-- Card: Play As -->
+        <!-- Card 1: Play As -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -49,37 +49,40 @@
                     android:letterSpacing="0.08"
                     android:layout_marginBottom="12dp" />
 
-                <RadioGroup
-                    android:id="@+id/sideRadioGroup"
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/sideChipGroup"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    app:singleSelection="true"
+                    app:selectionRequired="true">
 
-                    <RadioButton
-                        android:id="@+id/radioWhite"
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipWhite"
+                        style="@style/Widget.MaterialComponents.Chip.Filter"
                         android:layout_width="0dp"
-                        android:layout_height="48dp"
+                        android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="White"
+                        android:textAlignment="center"
                         android:textColor="#FFFFFF"
-                        android:buttonTint="#81B64C"
                         android:checked="true"
-                        android:textSize="16sp" />
+                        app:chipBackgroundColor="@color/chip_background_selector" />
 
-                    <RadioButton
-                        android:id="@+id/radioBlack"
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipBlack"
+                        style="@style/Widget.MaterialComponents.Chip.Filter"
                         android:layout_width="0dp"
-                        android:layout_height="48dp"
+                        android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Black"
+                        android:textAlignment="center"
                         android:textColor="#FFFFFF"
-                        android:buttonTint="#81B64C"
-                        android:textSize="16sp" />
-                </RadioGroup>
+                        app:chipBackgroundColor="@color/chip_background_selector" />
+                </com.google.android.material.chip.ChipGroup>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Card: Piece Visibility -->
+        <!-- Card 2: Piece Visibility -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -95,28 +98,64 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="PIECE VISIBILITY"
+                    android:textColor="#8E8E93"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.08"
+                    android:layout_marginBottom="12dp" />
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/pieceStyleChipGroup"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Piece Visibility"
-                    app:boxStrokeColor="#81B64C"
-                    app:hintTextColor="#81B64C"
-                    app:endIconTint="#81B64C">
+                    app:singleSelection="true"
+                    app:selectionRequired="true">
 
-                    <AutoCompleteTextView
-                        android:id="@+id/pieceStyleSpinner"
-                        android:layout_width="match_parent"
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipCheckers"
+                        style="@style/Widget.MaterialComponents.Chip.Filter"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:inputType="none"
+                        android:text="Black &amp; White"
                         android:textColor="#FFFFFF"
-                        android:textSize="16sp" />
+                        android:checked="true"
+                        app:chipBackgroundColor="@color/chip_background_selector" />
 
-                </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipAllWhite"
+                        style="@style/Widget.MaterialComponents.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="All White"
+                        android:textColor="#FFFFFF"
+                        app:chipBackgroundColor="@color/chip_background_selector" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipInvisible"
+                        style="@style/Widget.MaterialComponents.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Invisible Pieces"
+                        android:textColor="#FFFFFF"
+                        app:chipBackgroundColor="@color/chip_background_selector" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipTextInput"
+                        style="@style/Widget.MaterialComponents.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Text Input Only"
+                        android:textColor="#FFFFFF"
+                        app:chipBackgroundColor="@color/chip_background_selector" />
+                </com.google.android.material.chip.ChipGroup>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Card: Game Variant -->
+        <!-- Card 3: Game Variant -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -132,28 +171,46 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="GAME VARIANT"
+                    android:textColor="#8E8E93"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.08"
+                    android:layout_marginBottom="12dp" />
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/variantChipGroup"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Game Variant"
-                    app:boxStrokeColor="#81B64C"
-                    app:hintTextColor="#81B64C"
-                    app:endIconTint="#81B64C">
+                    app:singleSelection="true"
+                    app:selectionRequired="true">
 
-                    <AutoCompleteTextView
-                        android:id="@+id/gameModeSpinner"
-                        android:layout_width="match_parent"
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipStandard"
+                        style="@style/Widget.MaterialComponents.Chip.Filter"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:inputType="none"
+                        android:text="Standard Game"
                         android:textColor="#FFFFFF"
-                        android:textSize="16sp" />
+                        android:checked="true"
+                        app:chipBackgroundColor="@color/chip_background_selector" />
 
-                </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipPawnsOnly"
+                        style="@style/Widget.MaterialComponents.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Kings &amp; Pawns Only"
+                        android:textColor="#FFFFFF"
+                        app:chipBackgroundColor="@color/chip_background_selector" />
+                </com.google.android.material.chip.ChipGroup>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Card: Engine Difficulty -->
+        <!-- Card 4: Difficulty -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -169,28 +226,64 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ENGINE DIFFICULTY"
+                    android:textColor="#8E8E93"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.08"
+                    android:layout_marginBottom="12dp" />
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/difficultyChipGroup"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Engine Difficulty"
-                    app:boxStrokeColor="#81B64C"
-                    app:hintTextColor="#81B64C"
-                    app:endIconTint="#81B64C">
+                    app:singleSelection="true"
+                    app:selectionRequired="true">
 
-                    <AutoCompleteTextView
-                        android:id="@+id/difficultySpinner"
-                        android:layout_width="match_parent"
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipEasy"
+                        style="@style/Widget.MaterialComponents.Chip.Filter"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:inputType="none"
+                        android:text="Easy"
                         android:textColor="#FFFFFF"
-                        android:textSize="16sp" />
+                        app:chipBackgroundColor="@color/chip_background_selector" />
 
-                </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipMedium"
+                        style="@style/Widget.MaterialComponents.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Medium"
+                        android:textColor="#FFFFFF"
+                        android:checked="true"
+                        app:chipBackgroundColor="@color/chip_background_selector" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipHard"
+                        style="@style/Widget.MaterialComponents.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Hard"
+                        android:textColor="#FFFFFF"
+                        app:chipBackgroundColor="@color/chip_background_selector" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipMaster"
+                        style="@style/Widget.MaterialComponents.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Master"
+                        android:textColor="#FFFFFF"
+                        app:chipBackgroundColor="@color/chip_background_selector" />
+                </com.google.android.material.chip.ChipGroup>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Play Button -->
+        <!-- Start Game Button -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnStartGame"
             android:layout_width="match_parent"

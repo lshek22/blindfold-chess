@@ -10,5 +10,9 @@ data class GameHistoryEntity(
     val playerSide: String,
     val pieceStyle: String,
     val gameVariant: String,
-    val moveLogs: String
+    val moveLogs: String,
+    val isManual: Boolean = false,
+    val snapshotFen: String? = null,
+    val snapshotMoveIndex: Int = 0,
+    val diagramPlies: String? = null
 )

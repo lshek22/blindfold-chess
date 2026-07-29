@@ -1,24 +1,22 @@
 package com.example.blindfoldchess.ui.history
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
 import com.example.blindfoldchess.R
-import com.example.blindfoldchess.data.AppDatabase
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 
 class HistoryFragment : Fragment() {
 
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var adapter: GameHistoryAdapter
+    private lateinit var tabLayout: TabLayout
+    private lateinit var viewPager: ViewPager2
+    private lateinit var fabAddGame: ExtendedFloatingActionButton
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -26,47 +24,25 @@ class HistoryFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_history, container, false)
 
-        recyclerView = view.findViewById(R.id.historyRecyclerView)
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        tabLayout = view.findViewById(R.id.tabLayout)
+        viewPager = view.findViewById(R.id.viewPager)
+        fabAddGame = view.findViewById(R.id.fabAddGame)
 
-        adapter = GameHistoryAdapter(
-            games = emptyList(),
-            onItemClicked = { selectedGame ->
-                AlertDialog.Builder(requireContext())
-                    .setTitle("Move History Log")
-                    .setMessage(selectedGame.moveLogs.ifEmpty { "No moves recorded." })
-                    .setPositiveButton("Close", null)
-                    .show()
-            },
-            onDeleteClicked = { targetGame ->
-                lifecycleScope.launch(Dispatchers.IO) {
-                    val dao = AppDatabase.getDatabase(requireContext()).gameHistoryDao()
-                    dao.deleteGame(targetGame)
+        val adapter = HistoryPagerAdapter(this)
+        viewPager.adapter = adapter
 
-                    val updatedList = dao.getAllGames()
-                    withContext(Dispatchers.Main) {
-                        adapter.updateData(updatedList)
-                    }
-                }
+        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+            tab.text = when (position) {
+                0 -> "Auto Saved"
+                1 -> "Manual"
+                else -> ""
             }
-        )
-        recyclerView.adapter = adapter
+        }.attach()
 
-        loadGameHistory()
-        return view
-    }
-
-    override fun onResume() {
-        super.onResume()
-        loadGameHistory()
-    }
-
-    private fun loadGameHistory() {
-        lifecycleScope.launch(Dispatchers.IO) {
-            val dbGames = AppDatabase.getDatabase(requireContext()).gameHistoryDao().getAllGames()
-            withContext(Dispatchers.Main) {
-                adapter.updateData(dbGames)
-            }
+        fabAddGame.setOnClickListener {
+            startActivity(Intent(requireContext(), AddGameActivity::class.java))
         }
+
+        return view
     }
 }

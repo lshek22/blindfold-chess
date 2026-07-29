@@ -2,47 +2,72 @@
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/Widget.MaterialComponents.CardView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="12dp"
     android:layout_marginVertical="6dp"
-    app:cardCornerRadius="8dp"
-    app:cardElevation="3dp">
+    android:stateListAnimator="@null"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="2dp"
+    app:strokeWidth="0dp">
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:padding="12dp">
 
+        <!-- Board Preview Thumbnail -->
+        <com.example.blindfoldchess.ui.history.ChessMeridaBoardView
+            android:id="@+id/boardThumbnail"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Metadata Title -->
         <TextView
             android:id="@+id/txtGameMeta"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="8dp"
             android:text="Side: White | Mode: Kings &amp; Pawns"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
             android:textStyle="bold"
-            android:textSize="16sp" />
+            app:layout_constraintEnd_toStartOf="@id/btnDeleteGame"
+            app:layout_constraintStart_toEndOf="@id/boardThumbnail"
+            app:layout_constraintTop_toTopOf="@id/boardThumbnail" />
 
+        <!-- Date Subtitle -->
         <TextView
             android:id="@+id/txtGameDate"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_below="@id/txtGameMeta"
+            android:layout_marginStart="12dp"
             android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
             android:text="Date: 2026-06-13"
-            android:textColor="#777777"
-            android:textSize="13sp" />
+            android:textAppearance="?attr/textAppearanceBodySmall"
+            android:textColor="?android:attr/textColorSecondary"
+            app:layout_constraintEnd_toStartOf="@id/btnDeleteGame"
+            app:layout_constraintStart_toEndOf="@id/boardThumbnail"
+            app:layout_constraintTop_toBottomOf="@id/txtGameMeta" />
 
-        <!-- Trash Icon Button to Delete Game -->
+        <!-- Trash Action Button -->
         <ImageButton
             android:id="@+id/btnDeleteGame"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
             android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Delete"
             android:src="@android:drawable/ic_menu_delete"
-            android:contentDescription="Delete" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="?attr/colorError" />
 
-    </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </com.google.android.material.card.MaterialCardView>

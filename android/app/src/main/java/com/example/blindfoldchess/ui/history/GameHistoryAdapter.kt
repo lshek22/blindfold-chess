@@ -7,6 +7,7 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.blindfoldchess.R
+import com.example.blindfoldchess.chess.SimpleChessBoard
 import com.example.blindfoldchess.data.GameHistoryEntity
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -22,6 +23,7 @@ class GameHistoryAdapter(
         val txtMeta: TextView = view.findViewById(R.id.txtGameMeta)
         val txtDate: TextView = view.findViewById(R.id.txtGameDate)
         val btnDelete: ImageButton = view.findViewById(R.id.btnDeleteGame)
+        val boardThumbnail: ChessMeridaBoardView = view.findViewById(R.id.boardThumbnail)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryViewHolder {
@@ -36,6 +38,15 @@ class GameHistoryAdapter(
 
         val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
         holder.txtDate.text = sdf.format(Date(game.timestamp))
+
+        val fen = game.snapshotFen
+        if (fen != null) {
+            holder.boardThumbnail.setPosition(SimpleChessBoard.fromFenPlacement(fen))
+            holder.boardThumbnail.visibility = View.VISIBLE
+        } else {
+            // Older games saved before this feature existed have no snapshot.
+            holder.boardThumbnail.visibility = View.INVISIBLE
+        }
 
         holder.itemView.setOnClickListener { onItemClicked(game) }
         holder.btnDelete.setOnClickListener { onDeleteClicked(game) }
