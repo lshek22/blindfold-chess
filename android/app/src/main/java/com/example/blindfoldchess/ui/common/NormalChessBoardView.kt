@@ -20,7 +20,8 @@ class NormalChessBoardView @JvmOverloads constructor(
 
     private var boardDrawable: Drawable? = null
 
-    private val highlightColor = Color.parseColor("#8855FF00")
+    // Subtle yellow-green highlight overlay for selected/moved squares
+    private val highlightColor = Color.parseColor("#66FFEB3B")
     private val highlightPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = highlightColor
     }
@@ -148,7 +149,6 @@ class NormalChessBoardView @JvmOverloads constructor(
         val boardSide = minOf(w, h).toFloat()
         squareSize = boardSide / 8f
 
-        // Calculate offsets to center board inside View
         offsetX = (w - boardSide) / 2f
         offsetY = (h - boardSide) / 2f
 
@@ -160,7 +160,6 @@ class NormalChessBoardView @JvmOverloads constructor(
         heightMeasureSpec: Int
     ) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        // Allow view to take full measured width and height assigned by parent
         setMeasuredDimension(measuredWidth, measuredHeight)
     }
 
@@ -278,16 +277,13 @@ class NormalChessBoardView @JvmOverloads constructor(
                 }
             }
         } else {
-            if (currentSelection == square) {
-                selectedSquare = null
-                highlightedSquares = emptySet()
+            val prevSelection = currentSelection
+            selectedSquare = null
+
+            if (prevSelection == square) {
                 invalidate()
             } else {
-                selectedSquare = null
-                highlightedSquares = emptySet()
-                invalidate()
-
-                onMoveAttempt?.invoke(currentSelection, square)
+                onMoveAttempt?.invoke(prevSelection, square)
             }
         }
 

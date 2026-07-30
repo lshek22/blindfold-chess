@@ -1,18 +1,25 @@
 package com.example.blindfoldchess.ui.play
 
+import android.app.Dialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.blindfoldchess.Engine
+import com.example.blindfoldchess.R
 import com.example.blindfoldchess.chess.SimpleChessBoard
 import com.example.blindfoldchess.data.AppDatabase
 import com.example.blindfoldchess.data.GameHistoryEntity
 import com.example.blindfoldchess.databinding.FragmentPlayBinding
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -33,6 +40,10 @@ class PlayFragment : Fragment() {
     private val dynamicMoveLog = StringBuilder()
     private var isGameFinished = false
     private var isWhiteTurn = true
+
+    // Track last move origin and destination for highligting
+    private var lastMoveFrom: Int? = null
+    private var lastMoveTo: Int? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -131,6 +142,14 @@ class PlayFragment : Fragment() {
         val isCapture = checkIsCapture(move)
 
         if (engine.makeMove(move)) {
+            // Track player move squares for highlighting
+            if (move.length >= 4) {
+                val fromStr = move.substring(0, 2)
+                val toStr = move.substring(2, 4)
+                lastMoveFrom = uciSquareToViewSquare(fromStr)
+                lastMoveTo = uciSquareToViewSquare(toStr)
+            }
+
             val prefix = if (playerSide == "pass_and_play") {
                 if (isWhiteTurn) "White: " else "Black: "
             } else {
@@ -167,12 +186,23 @@ class PlayFragment : Fragment() {
 
     private fun triggerEngineMove() {
         lifecycleScope.launch(Dispatchers.Default) {
+            // Pause for 600ms before opponent/engine move
+            delay(600)
+
             val bestMove = engine.getBestMove(searchDepth)
             val engineCapture = checkIsCapture(bestMove)
 
             engine.makeMove(bestMove)
 
             withContext(Dispatchers.Main) {
+                // Track engine move squares for highlighting
+                if (bestMove.length >= 4) {
+                    val fromStr = bestMove.substring(0, 2)
+                    val toStr = bestMove.substring(2, 4)
+                    lastMoveFrom = uciSquareToViewSquare(fromStr)
+                    lastMoveTo = uciSquareToViewSquare(toStr)
+                }
+
                 dynamicMoveLog.append("Engine: $bestMove\n")
                 binding.txtGameLog.text = dynamicMoveLog.toString()
                 isWhiteTurn = !isWhiteTurn
@@ -184,6 +214,13 @@ class PlayFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun uciSquareToViewSquare(sqStr: String): Int {
+        val file = sqStr[0] - 'a'
+        val rank = sqStr[1].toString().toInt()
+        val engineSquare = (8 - rank) * 8 + file
+        return (7 - (engineSquare / 8)) * 8 + (engineSquare % 8)
     }
 
     private fun checkIsCapture(move: String): Boolean {
@@ -245,12 +282,24 @@ class PlayFragment : Fragment() {
     }
 
     private fun showGameOverDialog(titleText: String) {
-        AlertDialog.Builder(requireContext())
-            .setTitle("Game Over")
-            .setMessage(titleText)
-            .setCancelable(false)
-            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
-            .show()
+        val context = context ?: return
+        val dialog = Dialog(context)
+
+        val dialogView = layoutInflater.inflate(R.layout.dialog_game_over, null)
+        dialog.setContentView(dialogView)
+        dialog.setCancelable(false)
+
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        val txtMessage = dialogView.findViewById<TextView>(R.id.txtGameOverMessage)
+        val btnOk = dialogView.findViewById<View>(R.id.btnGameOverOk)
+
+        txtMessage.text = titleText
+        btnOk.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
     }
 
     private fun saveCurrentGameToHistory() {
@@ -261,7 +310,6 @@ class PlayFragment : Fragment() {
             return
         }
 
-        // Clean move log: strip "You: ", "Engine: ", "White: ", "Black: " prefixes to extract standard UCI moves
         val uciMoves = rawLogs.lines()
             .map { line -> line.substringAfter(":").trim().lowercase() }
             .filter { line -> line.matches(Regex("^[a-h][1-8][a-h][1-8][qrbn]?$")) }
@@ -270,7 +318,6 @@ class PlayFragment : Fragment() {
 
         val movesString = uciMoves.joinToString(" ")
 
-        // Generate diagram markers after every full move pair (every 2 plies)
         val diagramPliesString = uciMoves.indices
             .map { index -> index + 1 }
             .filter { ply -> ply % 2 == 0 }
@@ -313,7 +360,7 @@ class PlayFragment : Fragment() {
                     isManual = false,
                     snapshotFen = finalFen,
                     snapshotMoveIndex = totalHalfMoves,
-                    diagramPlies = diagramPliesString // Pass auto-generated diagram positions
+                    diagramPlies = diagramPliesString
                 )
                 db.gameHistoryDao().insertGame(newEntry)
                 android.util.Log.d("BlindfoldChessDB", "Game saved successfully.")
@@ -322,8 +369,15 @@ class PlayFragment : Fragment() {
             }
         }
     }
+
     private fun updateBoard() {
         binding.chessBoard.piecesPosition = parseBoard(engine.getBoard())
+
+        // Pass highlighted last move origin and destination squares
+        val activeHighlights = mutableSetOf<Int>()
+        lastMoveFrom?.let { activeHighlights.add(it) }
+        lastMoveTo?.let { activeHighlights.add(it) }
+        binding.chessBoard.highlightedSquares = activeHighlights
     }
 
     private fun convertMove(from: Int, to: Int): String {
