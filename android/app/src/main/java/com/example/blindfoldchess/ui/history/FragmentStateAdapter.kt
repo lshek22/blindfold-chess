@@ -9,8 +9,8 @@ class HistoryPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
 
     override fun createFragment(position: Int): Fragment {
         return when (position) {
-            0 -> GameListFragment.newInstance(isManual = false) // Auto Saved
-            1 -> GameListFragment.newInstance(isManual = true)  // Manual
+            0 -> GameListFragment.newInstance(isManual = false)
+            1 -> GameListFragment.newInstance(isManual = true)
             else -> throw IllegalStateException("Invalid position $position")
         }
     }

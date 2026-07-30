@@ -60,7 +60,6 @@ class SettingsFragment : Fragment() {
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         binding.rvBoardThemes.adapter = adapter
 
-        // Convert stored Int to Float for the Material Slider
         val currentVolume = prefs.getInt("sound_volume", 100)
         binding.seekBarVolume.value = currentVolume.toFloat()
         binding.txtVolumeLabel.text = "Sound Volume: $currentVolume%"

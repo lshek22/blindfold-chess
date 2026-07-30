@@ -73,8 +73,7 @@ class GameListFragment : Fragment() {
         lifecycleScope.launch(Dispatchers.IO) {
             val dao = AppDatabase.getDatabase(requireContext()).gameHistoryDao()
 
-            // Adjust this call based on your DAO implementation
-            // e.g., dao.getGamesBySource(isManual) or filtering the list
+
             val allGames = dao.getAllGames()
             val filteredGames = allGames.filter { it.isManual == isManual }
 

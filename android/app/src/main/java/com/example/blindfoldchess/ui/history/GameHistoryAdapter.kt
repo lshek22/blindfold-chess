@@ -44,7 +44,6 @@ class GameHistoryAdapter(
             holder.boardThumbnail.setPosition(SimpleChessBoard.fromFenPlacement(fen))
             holder.boardThumbnail.visibility = View.VISIBLE
         } else {
-            // Older games saved before this feature existed have no snapshot.
             holder.boardThumbnail.visibility = View.INVISIBLE
         }
 

@@ -31,9 +31,7 @@ class ChessMeridaBoardView @JvmOverloads constructor(
         loadPieceDrawables()
     }
 
-    /**
-     * Reads the active board background from SharedPreferences.
-     */
+
     fun loadBoardTheme() {
         val prefs = context.getSharedPreferences("chess_prefs", Context.MODE_PRIVATE)
         val themeName = prefs.getString("selected_board_theme", "blue") ?: "blue"
@@ -102,13 +100,11 @@ class ChessMeridaBoardView @JvmOverloads constructor(
         super.onDraw(canvas)
         val cellSize = width / 8f
 
-        // 1. Render theme background drawable
         boardDrawable?.let {
             it.setBounds(0, 0, width, height)
             it.draw(canvas)
         }
 
-        // 2. Render piece drawables over board squares
         for (row in 0..7) {
             for (col in 0..7) {
                 val pieceChar = board[row][col]

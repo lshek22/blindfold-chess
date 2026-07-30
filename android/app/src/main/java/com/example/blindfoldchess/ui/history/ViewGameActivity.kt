@@ -41,7 +41,6 @@ class ViewGameActivity : AppCompatActivity() {
 
         val moves = if (moveLogs.isBlank()) emptyList() else moveLogs.trim().split(Regex("\\s+"))
 
-        // FALLBACK: If diagramPlies is blank or missing, automatically generate diagrams every full move (2 plies)
         val diagramPlies = if (diagramPliesRaw.isBlank()) {
             moves.indices.map { index -> index + 1 }.filter { ply -> ply % 2 == 0 }
         } else {
@@ -72,7 +71,6 @@ class ViewGameActivity : AppCompatActivity() {
                 val newLine = TextView(this).apply {
                     text = "$prefix $move"
                     textSize = 16f
-                    // FIX: Explicitly set the text color to white so it displays over dark background
                     setTextColor(ContextCompat.getColor(this@ViewGameActivity, R.color.white))
                     textAlignment = View.TEXT_ALIGNMENT_CENTER
                     layoutParams = LinearLayout.LayoutParams(
@@ -84,7 +82,6 @@ class ViewGameActivity : AppCompatActivity() {
                 currentLine = if (isWhiteMove) newLine else null
             }
 
-            // A diagram may have been inserted here one or more times while entering the game.
             while (remainingDiagramPlies.remove(ply)) {
                 val diagram = ChessMeridaBoardView(this).apply {
                     layoutParams = LinearLayout.LayoutParams(dp(160), dp(160)).apply {
@@ -94,7 +91,7 @@ class ViewGameActivity : AppCompatActivity() {
                     setPosition(SimpleChessBoard.replay(moves, ply))
                 }
                 container.addView(diagram)
-                currentLine = null // next move (if any) starts a fresh line below the diagram
+                currentLine = null
             }
         }
     }

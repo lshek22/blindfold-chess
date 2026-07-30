@@ -41,7 +41,6 @@ class PlayFragment : Fragment() {
     private var isGameFinished = false
     private var isWhiteTurn = true
 
-    // Track last move origin and destination for highligting
     private var lastMoveFrom: Int? = null
     private var lastMoveTo: Int? = null
 
@@ -142,7 +141,6 @@ class PlayFragment : Fragment() {
         val isCapture = checkIsCapture(move)
 
         if (engine.makeMove(move)) {
-            // Track player move squares for highlighting
             if (move.length >= 4) {
                 val fromStr = move.substring(0, 2)
                 val toStr = move.substring(2, 4)
@@ -186,7 +184,6 @@ class PlayFragment : Fragment() {
 
     private fun triggerEngineMove() {
         lifecycleScope.launch(Dispatchers.Default) {
-            // Pause for 600ms before opponent/engine move
             delay(600)
 
             val bestMove = engine.getBestMove(searchDepth)
@@ -195,7 +192,6 @@ class PlayFragment : Fragment() {
             engine.makeMove(bestMove)
 
             withContext(Dispatchers.Main) {
-                // Track engine move squares for highlighting
                 if (bestMove.length >= 4) {
                     val fromStr = bestMove.substring(0, 2)
                     val toStr = bestMove.substring(2, 4)
@@ -373,7 +369,6 @@ class PlayFragment : Fragment() {
     private fun updateBoard() {
         binding.chessBoard.piecesPosition = parseBoard(engine.getBoard())
 
-        // Pass highlighted last move origin and destination squares
         val activeHighlights = mutableSetOf<Int>()
         lastMoveFrom?.let { activeHighlights.add(it) }
         lastMoveTo?.let { activeHighlights.add(it) }

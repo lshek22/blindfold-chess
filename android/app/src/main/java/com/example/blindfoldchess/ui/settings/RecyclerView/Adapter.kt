@@ -40,12 +40,10 @@ class BoardThemeAdapter(
         if (isSelected) {
             holder.binding.txtThemeName.setTextColor(ContextCompat.getColor(context, R.color.green_primary))
             holder.binding.imgThumbnail.alpha = 1.0f
-            // FIX: Use Float (4f) instead of Int (4)
             holder.binding.imgThumbnail.strokeWidth = 4f
         } else {
             holder.binding.txtThemeName.setTextColor(ContextCompat.getColor(context, R.color.white))
             holder.binding.imgThumbnail.alpha = 0.5f
-            // FIX: Use Float (0f) instead of Int (0)
             holder.binding.imgThumbnail.strokeWidth = 0f
         }
 

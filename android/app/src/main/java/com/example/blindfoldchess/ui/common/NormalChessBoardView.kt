@@ -20,7 +20,6 @@ class NormalChessBoardView @JvmOverloads constructor(
 
     private var boardDrawable: Drawable? = null
 
-    // Subtle yellow-green highlight overlay for selected/moved squares
     private val highlightColor = Color.parseColor("#66FFEB3B")
     private val highlightPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = highlightColor

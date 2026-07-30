@@ -18,21 +18,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-/**
- * Move-transcript style game entry, like a chess book: moves stack up in the
- * center as "1 e2e4 d7d5 / 2 e4d5 ...", and the Board button drops a small
- * diagram of the current position right below whatever was just entered.
- * Since a diagram can be inserted between White's and Black's move, a new
- * line started right after one uses "N... move" (matches book notation for
- * resuming mid-pair after a diagram).
- */
+
 class AddGameActivity : AppCompatActivity() {
 
     private val moves = mutableListOf<String>()
     private val diagramPlies = mutableListOf<Int>()
 
-    // The TextView for the move-number line currently being built, or null if
-    // the last thing added to the transcript was a diagram (or nothing yet).
+
     private var currentLineView: TextView? = null
 
     private lateinit var transcriptContainer: LinearLayout
@@ -73,11 +65,9 @@ class AddGameActivity : AppCompatActivity() {
 
         val line = currentLineView
         if (line != null) {
-            // Continuing the line started by the previous half-move (only
-            // happens for Black's move right after White's, with no diagram
-            // inserted in between).
+
             line.text = "${line.text} $move"
-            if (!isWhiteMove) currentLineView = null // pair complete, start fresh next time
+            if (!isWhiteMove) currentLineView = null
         } else {
             val prefix = if (isWhiteMove) "$moveNumber" else "$moveNumber..."
             val newLine = TextView(this).apply {
@@ -109,7 +99,7 @@ class AddGameActivity : AppCompatActivity() {
             setPosition(board)
         }
         transcriptContainer.addView(diagram)
-        currentLineView = null // next move starts a fresh line below the diagram
+        currentLineView = null
         scrollToBottom()
     }
 
@@ -125,8 +115,7 @@ class AddGameActivity : AppCompatActivity() {
             return
         }
 
-        // Snapshot saved with the game is simply the final position; the
-        // inline diagrams above are just presentational for this screen.
+
         val snapshotFen = SimpleChessBoard.toFenPlacement(SimpleChessBoard.replay(moves, moves.size))
 
         val newGame = GameHistoryEntity(
