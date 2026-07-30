@@ -8,7 +8,6 @@
     android:orientation="vertical"
     android:padding="20dp">
 
-    <!-- Header Section Card -->
     <com.google.android.material.card.MaterialCardView
         style="@style/Widget.Material3.CardView.Elevated"
         android:layout_width="match_parent"
@@ -40,7 +39,6 @@
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Scrollable Transcript Container -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"

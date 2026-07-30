@@ -20,7 +20,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="16dp" />
 
-    <!-- UPDATED: Pointing to NormalChessBoardView instead -->
+
     <com.example.blindfoldchess.ui.common.NormalChessBoardView
         android:id="@+id/puzzleChessBoard"
         android:layout_width="match_parent"

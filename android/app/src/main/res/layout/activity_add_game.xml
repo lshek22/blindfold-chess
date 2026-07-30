@@ -19,7 +19,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Top Move Input Bar -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/moveInputLayout"
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
@@ -71,7 +70,6 @@
         app:layout_constraintTop_toTopOf="@id/moveInputLayout"
         app:strokeColor="@color/green_primary" />
 
-    <!-- Moves Transcript Scroll Area -->
     <androidx.core.widget.NestedScrollView
         android:id="@+id/transcriptScroll"
         android:layout_width="0dp"
@@ -92,7 +90,6 @@
             android:orientation="vertical" />
     </androidx.core.widget.NestedScrollView>
 
-    <!-- Bottom Save CTA -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnSaveGame"
         style="@style/Widget.Material3.Button"

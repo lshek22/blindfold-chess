@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     android:background="#161512">
 
-    <!-- Top Navigation Header -->
     <TextView
         android:id="@+id/txtTitle"
         android:layout_width="wrap_content"
@@ -18,14 +17,12 @@
         android:textSize="20sp"
         android:textStyle="bold" />
 
-    <!-- Chess Board (Full Screen Width) -->
     <com.example.blindfoldchess.ui.common.NormalChessBoardView
         android:id="@+id/chessBoard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/txtTitle" />
 
-    <!-- Text Game Console / Log Section -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/textGameConsole"
         android:layout_width="match_parent"
