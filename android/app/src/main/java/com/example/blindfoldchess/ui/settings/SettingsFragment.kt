@@ -49,9 +49,7 @@ class SettingsFragment : Fragment() {
             BoardTheme("wood", "Wood", R.drawable.woodthumbnail),
             BoardTheme("wood2", "Wood2", R.drawable.wood2thumbnail),
             BoardTheme("wood3", "Wood3", R.drawable.wood3thumbnail),
-            BoardTheme("wood4", "Wood4", R.drawable.wood4thumbnail),
-
-
+            BoardTheme("wood4", "Wood4", R.drawable.wood4thumbnail)
         )
 
         val adapter = BoardThemeAdapter(availableThemes, currentTheme) { selectedTheme ->
@@ -61,6 +59,19 @@ class SettingsFragment : Fragment() {
         binding.rvBoardThemes.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         binding.rvBoardThemes.adapter = adapter
+
+        // Convert stored Int to Float for the Material Slider
+        val currentVolume = prefs.getInt("sound_volume", 100)
+        binding.seekBarVolume.value = currentVolume.toFloat()
+        binding.txtVolumeLabel.text = "Sound Volume: $currentVolume%"
+
+        binding.seekBarVolume.addOnChangeListener { _, value, fromUser ->
+            val progress = value.toInt()
+            binding.txtVolumeLabel.text = "Sound Volume: $progress%"
+            if (fromUser) {
+                prefs.edit().putInt("sound_volume", progress).apply()
+            }
+        }
 
         return binding.root
     }

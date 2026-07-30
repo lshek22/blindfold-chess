@@ -23,7 +23,7 @@
             android:layout_marginTop="12dp"
             android:layout_marginBottom="24dp" />
 
-        <!-- Card 1: Play As -->
+        <!-- Card 1: Play As / Mode -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -42,7 +42,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="PLAY AS"
+                    android:text="PLAY MODE &amp; SIDE"
                     android:textColor="#8E8E93"
                     android:textSize="12sp"
                     android:textStyle="bold"
@@ -59,11 +59,9 @@
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chipWhite"
                         style="@style/Widget.MaterialComponents.Chip.Filter"
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="White"
-                        android:textAlignment="center"
+                        android:text="White vs AI"
                         android:textColor="#FFFFFF"
                         android:checked="true"
                         app:chipBackgroundColor="@color/chip_background_selector" />
@@ -71,13 +69,21 @@
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chipBlack"
                         style="@style/Widget.MaterialComponents.Chip.Filter"
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Black"
-                        android:textAlignment="center"
+                        android:text="Black vs AI"
                         android:textColor="#FFFFFF"
                         app:chipBackgroundColor="@color/chip_background_selector" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipPassAndPlay"
+                        style="@style/Widget.MaterialComponents.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="2-Player (Pass &amp; Play)"
+                        android:textColor="#FFFFFF"
+                        app:chipBackgroundColor="@color/chip_background_selector" />
+
                 </com.google.android.material.chip.ChipGroup>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -280,6 +286,51 @@
                         android:textColor="#FFFFFF"
                         app:chipBackgroundColor="@color/chip_background_selector" />
                 </com.google.android.material.chip.ChipGroup>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Card 5: Half-Move Clock Input -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            app:cardBackgroundColor="#1E1E1E"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="HALF-MOVE CLOCK (50-MOVE RULE)"
+                    android:textColor="#8E8E93"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.08"
+                    android:layout_marginBottom="8dp" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Half-moves (e.g. 0)"
+                    app:hintTextColor="#8E8E93"
+                    app:boxBackgroundMode="none">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/edtHalfMoveCount"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        android:text="0"
+                        android:textColor="#FFFFFF"
+                        android:textSize="16sp" />
+                </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 

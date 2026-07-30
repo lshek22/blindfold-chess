@@ -2,7 +2,9 @@ package com.example.blindfoldchess.ui.settings
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.example.blindfoldchess.R
 import com.example.blindfoldchess.databinding.ItemBoardThemeBinding
 
 data class BoardTheme(
@@ -29,11 +31,23 @@ class BoardThemeAdapter(
 
     override fun onBindViewHolder(holder: ThemeViewHolder, position: Int) {
         val theme = themes[position]
+        val context = holder.itemView.context
+        val isSelected = theme.id == selectedThemeId
+
         holder.binding.txtThemeName.text = theme.displayName
         holder.binding.imgThumbnail.setImageResource(theme.thumbnailResId)
 
-        val isSelected = theme.id == selectedThemeId
-        holder.binding.imgThumbnail.alpha = if (isSelected) 1.0f else 0.5f
+        if (isSelected) {
+            holder.binding.txtThemeName.setTextColor(ContextCompat.getColor(context, R.color.green_primary))
+            holder.binding.imgThumbnail.alpha = 1.0f
+            // FIX: Use Float (4f) instead of Int (4)
+            holder.binding.imgThumbnail.strokeWidth = 4f
+        } else {
+            holder.binding.txtThemeName.setTextColor(ContextCompat.getColor(context, R.color.white))
+            holder.binding.imgThumbnail.alpha = 0.5f
+            // FIX: Use Float (0f) instead of Int (0)
+            holder.binding.imgThumbnail.strokeWidth = 0f
+        }
 
         holder.itemView.setOnClickListener {
             selectedThemeId = theme.id

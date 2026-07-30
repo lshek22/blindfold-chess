@@ -2,15 +2,15 @@
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    style="@style/Widget.Material3.CardView.Elevated"
+    style="@style/Widget.MaterialComponents.CardView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="12dp"
+    android:layout_marginHorizontal="16dp"
     android:layout_marginVertical="6dp"
     android:stateListAnimator="@null"
     app:cardBackgroundColor="@color/card_dark"
     app:cardCornerRadius="16dp"
-    app:cardElevation="2dp"
+    app:cardElevation="0dp"
     app:strokeColor="@color/green_primary"
     app:strokeWidth="1dp">
 
@@ -21,8 +21,8 @@
 
         <com.example.blindfoldchess.ui.history.ChessMeridaBoardView
             android:id="@+id/boardThumbnail"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -34,8 +34,8 @@
             android:layout_marginStart="12dp"
             android:layout_marginEnd="8dp"
             android:text="Side: White | Mode: Kings &amp; Pawns"
-            android:textAppearance="?attr/textAppearanceTitleMedium"
             android:textColor="@color/white"
+            android:textSize="15sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@id/btnDeleteGame"
             app:layout_constraintStart_toEndOf="@id/boardThumbnail"
@@ -49,23 +49,23 @@
             android:layout_marginTop="4dp"
             android:layout_marginEnd="8dp"
             android:text="Date: 2026-06-13"
-            android:textAppearance="?attr/textAppearanceBodySmall"
             android:textColor="@color/text_secondary_dark"
+            android:textSize="12sp"
             app:layout_constraintEnd_toStartOf="@id/btnDeleteGame"
             app:layout_constraintStart_toEndOf="@id/boardThumbnail"
             app:layout_constraintTop_toBottomOf="@id/txtGameMeta" />
 
         <ImageButton
             android:id="@+id/btnDeleteGame"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Delete"
             android:src="@android:drawable/ic_menu_delete"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:tint="?attr/colorError" />
+            app:tint="#FF5252" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -33,7 +33,7 @@ import com.example.blindfoldchess.R
 import com.example.blindfoldchess.databinding.ActivityMainBinding
 
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
 class MainActivity : AppCompatActivity() {

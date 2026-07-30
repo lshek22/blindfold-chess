@@ -7,6 +7,18 @@
     android:background="@color/black"
     android:padding="16dp">
 
+    <TextView
+        android:id="@+id/txtGameTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:paddingBottom="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <!-- Top Move Input Bar -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/moveInputLayout"

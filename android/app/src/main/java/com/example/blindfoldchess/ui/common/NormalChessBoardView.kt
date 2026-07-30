@@ -66,12 +66,15 @@ class NormalChessBoardView @JvmOverloads constructor(
     var canMovePiece: ((String) -> Boolean)? = null
 
     private var squareSize = 0f
+    private var offsetX = 0f
+    private var offsetY = 0f
 
     private val pieceDrawables = mutableMapOf<String, Drawable>()
 
     private var selectedSquare: Int? = null
 
     init {
+        setLayerType(LAYER_TYPE_SOFTWARE, null)
         loadPieceDrawables()
         loadBoardTheme()
     }
@@ -142,7 +145,13 @@ class NormalChessBoardView @JvmOverloads constructor(
         oldh: Int
     ) {
         super.onSizeChanged(w, h, oldw, oldh)
-        squareSize = minOf(w, h) / 8f
+        val boardSide = minOf(w, h).toFloat()
+        squareSize = boardSide / 8f
+
+        // Calculate offsets to center board inside View
+        offsetX = (w - boardSide) / 2f
+        offsetY = (h - boardSide) / 2f
+
         labelPaint.textSize = squareSize * 0.2f
     }
 
@@ -151,15 +160,21 @@ class NormalChessBoardView @JvmOverloads constructor(
         heightMeasureSpec: Int
     ) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        val width = measuredWidth
-        setMeasuredDimension(width, width)
+        // Allow view to take full measured width and height assigned by parent
+        setMeasuredDimension(measuredWidth, measuredHeight)
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
+        val boardSize = squareSize * 8
         boardDrawable?.let {
-            it.setBounds(0, 0, width, height)
+            it.setBounds(
+                offsetX.toInt(),
+                offsetY.toInt(),
+                (offsetX + boardSize).toInt(),
+                (offsetY + boardSize).toInt()
+            )
             it.draw(canvas)
         }
 
@@ -171,8 +186,8 @@ class NormalChessBoardView @JvmOverloads constructor(
                     val displayRank = if (isFlipped) rank else 7 - rank
                     val displayFile = if (isFlipped) 7 - file else file
 
-                    val left = displayFile * squareSize
-                    val top = displayRank * squareSize
+                    val left = offsetX + displayFile * squareSize
+                    val top = offsetY + displayRank * squareSize
                     val right = left + squareSize
                     val bottom = top + squareSize
 
@@ -197,12 +212,15 @@ class NormalChessBoardView @JvmOverloads constructor(
         val displayFile = if (isFlipped) 7 - file else file
         val displayRank = if (isFlipped) rank else 7 - rank
 
-        val left = (displayFile * squareSize).toInt()
-        val top = (displayRank * squareSize).toInt()
+        val left = (offsetX + displayFile * squareSize).toInt()
+        val top = (offsetY + displayRank * squareSize).toInt()
+        val right = (left + squareSize).toInt()
+        val bottom = (top + squareSize).toInt()
 
-        pieceDrawables[piece]?.let {
-            it.setBounds(left, top, left + squareSize.toInt(), top + squareSize.toInt())
-            it.draw(canvas)
+        pieceDrawables[piece]?.let { drawable ->
+            val pieceDrawable = drawable.mutate()
+            pieceDrawable.setBounds(left, top, right, bottom)
+            pieceDrawable.draw(canvas)
         }
     }
 
@@ -214,16 +232,16 @@ class NormalChessBoardView @JvmOverloads constructor(
             val displayFileChar = if (isFlipped) files[7 - i] else files[i]
             canvas.drawText(
                 displayFileChar.toString(),
-                i * squareSize + padding,
-                8 * squareSize - padding,
+                offsetX + i * squareSize + padding,
+                offsetY + 8 * squareSize - padding,
                 labelPaint
             )
 
             val displayRankNum = if (isFlipped) (8 - i) else (i + 1)
             canvas.drawText(
                 displayRankNum.toString(),
-                padding,
-                (7 - i) * squareSize + labelPaint.textSize + padding,
+                offsetX + padding,
+                offsetY + (7 - i) * squareSize + labelPaint.textSize + padding,
                 labelPaint
             )
         }
@@ -234,8 +252,15 @@ class NormalChessBoardView @JvmOverloads constructor(
             return super.onTouchEvent(event)
         }
 
-        val displayFile = (event.x / squareSize).toInt().coerceIn(0, 7)
-        val displayRank = (event.y / squareSize).toInt().coerceIn(0, 7)
+        val relativeX = event.x - offsetX
+        val relativeY = event.y - offsetY
+
+        if (relativeX < 0 || relativeX >= squareSize * 8 || relativeY < 0 || relativeY >= squareSize * 8) {
+            return false
+        }
+
+        val displayFile = (relativeX / squareSize).toInt().coerceIn(0, 7)
+        val displayRank = (relativeY / squareSize).toInt().coerceIn(0, 7)
 
         val file = if (isFlipped) 7 - displayFile else displayFile
         val rank = if (isFlipped) displayRank else 7 - displayRank

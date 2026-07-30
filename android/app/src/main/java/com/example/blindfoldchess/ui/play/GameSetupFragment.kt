@@ -26,7 +26,12 @@ class GameSetupFragment : Fragment() {
         val btnStartGame = view.findViewById<Button>(R.id.btnStartGame)
 
         btnStartGame.setOnClickListener {
-            val selectedSide = if (sideChipGroup.checkedChipId == R.id.chipWhite) "white" else "black"
+            // Updated side evaluation to handle Pass & Play
+            val selectedSide = when (sideChipGroup.checkedChipId) {
+                R.id.chipBlack -> "black"
+                R.id.chipPassAndPlay -> "pass_and_play"
+                else -> "white"
+            }
 
             val pieceStyle = when (pieceStyleChipGroup.checkedChipId) {
                 R.id.chipAllWhite -> "all_white"

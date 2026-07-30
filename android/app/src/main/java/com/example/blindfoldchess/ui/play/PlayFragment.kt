@@ -8,6 +8,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.blindfoldchess.Engine
+import com.example.blindfoldchess.chess.SimpleChessBoard
 import com.example.blindfoldchess.data.AppDatabase
 import com.example.blindfoldchess.data.GameHistoryEntity
 import com.example.blindfoldchess.databinding.FragmentPlayBinding
@@ -21,35 +22,36 @@ class PlayFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var engine: Engine
+    private lateinit var soundManager: SoundManager
 
     private var playerSide = "white"
     private var initialStyle = "normal"
     private var gameVariant = "standard"
+    private var difficulty = "medium"
+    private var halfMoveClock = 0
+
     private val dynamicMoveLog = StringBuilder()
     private var isGameFinished = false
-
-    private var difficulty = "medium"
+    private var isWhiteTurn = true
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
         _binding = FragmentPlayBinding.inflate(inflater, container, false)
 
         playerSide = arguments?.getString("selectedSide") ?: "white"
         initialStyle = arguments?.getString("pieceStyle") ?: "normal"
         gameVariant = arguments?.getString("gameVariant") ?: "standard"
+        difficulty = arguments?.getString("difficulty") ?: "medium"
+        halfMoveClock = arguments?.getInt("halfMoveCount", 0) ?: 0
 
         binding.chessBoard.isFlipped = (playerSide == "black")
         binding.chessBoard.pieceStyle = initialStyle
 
         engine = Engine()
         engine.initEngine()
-
-        difficulty = arguments?.getString("difficulty") ?: "medium"
-
 
         if (gameVariant == "pawns_only") {
             engine.setPosition("4k3/pppppppp/8/8/8/8/PPPPPPPP/4K3 w ---- - 0 1")
@@ -63,8 +65,15 @@ class PlayFragment : Fragment() {
         }
 
         binding.chessBoard.canMovePiece = { piece ->
-            if (isGameFinished) false
-            else if (playerSide == "white") piece[0].isUpperCase() else piece[0].isLowerCase()
+            if (isGameFinished) {
+                false
+            } else if (playerSide == "pass_and_play") {
+                if (isWhiteTurn) piece[0].isUpperCase() else piece[0].isLowerCase()
+            } else if (playerSide == "white") {
+                piece[0].isUpperCase()
+            } else {
+                piece[0].isLowerCase()
+            }
         }
 
         binding.chessBoard.onMoveAttempt = { from, to ->
@@ -77,30 +86,7 @@ class PlayFragment : Fragment() {
             val inputMove = binding.edtMoveInput.text.toString().trim().lowercase()
             if (inputMove.length == 4) {
                 binding.edtMoveInput.setText("")
-
-                if (engine.makeMove(inputMove)) {
-                    dynamicMoveLog.append("You: $inputMove\n")
-                    binding.txtGameLog.text = dynamicMoveLog.toString()
-                    updateBoard()
-
-                    if (checkAndHandleGameOver("Engine")) return@setOnClickListener
-
-                    lifecycleScope.launch(Dispatchers.Default) {
-                        val bestMove = engine.getBestMove(searchDepth)
-
-                        engine.makeMove(bestMove)
-
-                        withContext(Dispatchers.Main) {
-                            dynamicMoveLog.append("Engine: $bestMove\n")
-                            binding.txtGameLog.text = dynamicMoveLog.toString()
-                            updateBoard()
-
-                            checkAndHandleGameOver("You")
-                        }
-                    }
-                } else {
-                    binding.edtMoveInput.error = "Invalid move"
-                }
+                executeGameMove(inputMove)
             }
         }
 
@@ -128,43 +114,96 @@ class PlayFragment : Fragment() {
         updateBoard()
 
         if (playerSide == "black") {
-            lifecycleScope.launch(Dispatchers.Default) {
-                val bestMove = engine.getBestMove(searchDepth)
-                engine.makeMove(bestMove)
-                withContext(Dispatchers.Main) {
-                    dynamicMoveLog.append("Engine: $bestMove\n")
-                    binding.txtGameLog.text = dynamicMoveLog.toString()
-                    updateBoard()
-                }
-            }
+            triggerEngineMove()
         }
 
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        soundManager = SoundManager(requireContext())
+    }
+
     private fun executeGameMove(move: String) {
         if (isGameFinished) return
+
+        val isCapture = checkIsCapture(move)
+
         if (engine.makeMove(move)) {
-            dynamicMoveLog.append("You: $move\n")
+            val prefix = if (playerSide == "pass_and_play") {
+                if (isWhiteTurn) "White: " else "Black: "
+            } else {
+                "You: "
+            }
+
+            dynamicMoveLog.append("$prefix$move\n")
             binding.txtGameLog.text = dynamicMoveLog.toString()
+
+            isWhiteTurn = !isWhiteTurn
+
+            if (playerSide == "pass_and_play") {
+                binding.chessBoard.isFlipped = !isWhiteTurn
+            }
 
             updateBoard()
 
-            if (checkAndHandleGameOver("Engine")) return
+            val winnerLabel = if (playerSide == "pass_and_play") {
+                if (!isWhiteTurn) "White" else "Black"
+            } else {
+                "Engine"
+            }
 
-            lifecycleScope.launch(Dispatchers.Default) {
-                val bestMove = engine.getBestMove(searchDepth)
-                engine.makeMove(bestMove)
-                withContext(Dispatchers.Main) {
-                    dynamicMoveLog.append("Engine: $bestMove\n")
-                    binding.txtGameLog.text = dynamicMoveLog.toString()
+            if (checkAndHandleGameOver(winnerLabel)) return
+            playMoveSound(isCapture)
 
-                    updateBoard()
-                    checkAndHandleGameOver("You")
+            if (playerSide != "pass_and_play") {
+                triggerEngineMove()
+            }
+        } else {
+            binding.edtMoveInput.error = "Invalid move"
+        }
+    }
+
+    private fun triggerEngineMove() {
+        lifecycleScope.launch(Dispatchers.Default) {
+            val bestMove = engine.getBestMove(searchDepth)
+            val engineCapture = checkIsCapture(bestMove)
+
+            engine.makeMove(bestMove)
+
+            withContext(Dispatchers.Main) {
+                dynamicMoveLog.append("Engine: $bestMove\n")
+                binding.txtGameLog.text = dynamicMoveLog.toString()
+                isWhiteTurn = !isWhiteTurn
+
+                updateBoard()
+
+                if (!checkAndHandleGameOver("You")) {
+                    playMoveSound(engineCapture)
                 }
             }
         }
     }
+
+    private fun checkIsCapture(move: String): Boolean {
+        if (move.length < 4) return false
+        val destSquareStr = move.substring(2, 4)
+        val file = destSquareStr[0] - 'a'
+        val rank = destSquareStr[1].toString().toInt()
+        val viewSquare = (8 - rank) * 8 + file
+
+        return binding.chessBoard.piecesPosition.containsKey(viewSquare)
+    }
+
+    private fun playMoveSound(isCapture: Boolean) {
+        if (isCapture) {
+            soundManager.playSound("capture")
+        } else {
+            soundManager.playSound("move")
+        }
+    }
+
     private val searchDepth: Int
         get() = when (difficulty) {
             "easy" -> if (gameVariant == "pawns_only") 4 else 2
@@ -174,19 +213,30 @@ class PlayFragment : Fragment() {
             else -> 5
         }
 
-
-    private fun checkAndHandleGameOver(checkmatedPlayer: String): Boolean {
+    private fun checkAndHandleGameOver(winnerOrCheckmated: String): Boolean {
         val isCheckmate = engine.isCheckmate()
         val isDraw = engine.isDraw()
 
         if (isCheckmate) {
             isGameFinished = true
-            val message = if (checkmatedPlayer == "You") "Checkmate! The engine wins." else "Checkmate! You win!"
+
+            val message = if (playerSide == "pass_and_play") {
+                soundManager.playSound("victory")
+                "Checkmate! $winnerOrCheckmated wins!"
+            } else if (winnerOrCheckmated == "Engine") {
+                soundManager.playSound("victory")
+                "Checkmate! You win!"
+            } else {
+                soundManager.playSound("defeat")
+                "Checkmate! The engine wins."
+            }
+
             showGameOverDialog(message)
             saveCurrentGameToHistory()
             return true
         } else if (isDraw) {
             isGameFinished = true
+            soundManager.playSound("draw")
             showGameOverDialog("The game ended in a draw!")
             saveCurrentGameToHistory()
             return true
@@ -204,31 +254,69 @@ class PlayFragment : Fragment() {
     }
 
     private fun saveCurrentGameToHistory() {
-        val movesString = dynamicMoveLog.toString().trim()
+        val rawLogs = dynamicMoveLog.toString().trim()
 
-        if (movesString.isEmpty()) {
+        if (rawLogs.isEmpty()) {
             android.util.Log.d("BlindfoldChessDB", "Save skipped: Move log is empty.")
             return
         }
 
+        // Clean move log: strip "You: ", "Engine: ", "White: ", "Black: " prefixes to extract standard UCI moves
+        val uciMoves = rawLogs.lines()
+            .map { line -> line.substringAfter(":").trim().lowercase() }
+            .filter { line -> line.matches(Regex("^[a-h][1-8][a-h][1-8][qrbn]?$")) }
+
+        if (uciMoves.isEmpty()) return
+
+        val movesString = uciMoves.joinToString(" ")
+
+        // Generate diagram markers after every full move pair (every 2 plies)
+        val diagramPliesString = uciMoves.indices
+            .map { index -> index + 1 }
+            .filter { ply -> ply % 2 == 0 }
+            .joinToString(",")
+
+        val appContext = context?.applicationContext ?: return
         val currentTimestamp = System.currentTimeMillis()
 
-        android.util.Log.d("BlindfoldChessDB", "Attempting to save game. Moves:\n$movesString")
+        val rawEngineBoard = engine.getBoard()
+        val cleanBoard = rawEngineBoard.replace("\n", "").replace(" ", "")
+        val boardGrid = Array(8) { CharArray(8) { ' ' } }
+
+        if (cleanBoard.length == 64) {
+            for (i in 0 until 64) {
+                val r = i / 8
+                val c = i % 8
+                val ch = cleanBoard[i]
+                boardGrid[r][c] = if (ch == '.') ' ' else ch
+            }
+        }
+
+        val fenPlacement = SimpleChessBoard.toFenPlacement(boardGrid)
+        val activeColor = if (isWhiteTurn) "w" else "b"
+
+        val totalHalfMoves = uciMoves.size
+        val fullMoveNumber = (totalHalfMoves / 2) + 1
+
+        val finalFen = "$fenPlacement $activeColor - - $halfMoveClock $fullMoveNumber"
 
         lifecycleScope.launch(Dispatchers.IO) {
             try {
-                val db = AppDatabase.getDatabase(requireContext())
+                val db = AppDatabase.getDatabase(appContext)
                 val newEntry = GameHistoryEntity(
                     id = 0,
                     timestamp = currentTimestamp,
                     playerSide = playerSide,
                     pieceStyle = initialStyle,
                     gameVariant = gameVariant,
-                    moveLogs = movesString
+                    moveLogs = movesString,
+                    isManual = false,
+                    snapshotFen = finalFen,
+                    snapshotMoveIndex = totalHalfMoves,
+                    diagramPlies = diagramPliesString // Pass auto-generated diagram positions
                 )
                 db.gameHistoryDao().insertGame(newEntry)
-
-                android.util.Log.d("BlindfoldChessDB", "Database save SUCCESSFUL!")
+                android.util.Log.d("BlindfoldChessDB", "Game saved successfully.")
             } catch (e: Exception) {
                 android.util.Log.e("BlindfoldChessDB", "Database save FAILED: ${e.message}", e)
             }
@@ -276,6 +364,7 @@ class PlayFragment : Fragment() {
     }
 
     override fun onDestroyView() {
+        soundManager.release()
         if (!isGameFinished) {
             saveCurrentGameToHistory()
         }

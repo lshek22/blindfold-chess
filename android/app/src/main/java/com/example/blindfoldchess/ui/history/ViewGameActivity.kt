@@ -40,7 +40,13 @@ class ViewGameActivity : AppCompatActivity() {
         val diagramPliesRaw = intent.getStringExtra(EXTRA_DIAGRAM_PLIES).orEmpty()
 
         val moves = if (moveLogs.isBlank()) emptyList() else moveLogs.trim().split(Regex("\\s+"))
-        val diagramPlies = diagramPliesRaw.split(",").mapNotNull { it.trim().toIntOrNull() }
+
+        // FALLBACK: If diagramPlies is blank or missing, automatically generate diagrams every full move (2 plies)
+        val diagramPlies = if (diagramPliesRaw.isBlank()) {
+            moves.indices.map { index -> index + 1 }.filter { ply -> ply % 2 == 0 }
+        } else {
+            diagramPliesRaw.split(",").mapNotNull { it.trim().toIntOrNull() }
+        }
 
         findViewById<TextView>(R.id.txtGameTitle).text = meta
         val transcriptContainer = findViewById<LinearLayout>(R.id.transcriptContainer)
