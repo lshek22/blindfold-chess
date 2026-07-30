@@ -7,16 +7,11 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat // ADD THIS IMPORT
 import com.example.blindfoldchess.R
 import com.example.blindfoldchess.chess.SimpleChessBoard
 import com.example.blindfoldchess.data.GameHistoryEntity
 
-/**
- * Read-only game viewer: renders the same centered "1 e2e4 d7d5 / 2 e4d5 ..."
- * transcript style used in AddGameActivity, without any input or action
- * buttons, replaying each Board diagram at the exact ply where it was
- * inserted while the game was being entered.
- */
 class ViewGameActivity : AppCompatActivity() {
 
     companion object {
@@ -71,6 +66,8 @@ class ViewGameActivity : AppCompatActivity() {
                 val newLine = TextView(this).apply {
                     text = "$prefix $move"
                     textSize = 16f
+                    // FIX: Explicitly set the text color to white so it displays over dark background
+                    setTextColor(ContextCompat.getColor(this@ViewGameActivity, R.color.white))
                     textAlignment = View.TEXT_ALIGNMENT_CENTER
                     layoutParams = LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.WRAP_CONTENT,

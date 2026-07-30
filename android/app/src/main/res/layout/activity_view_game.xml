@@ -1,31 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/black"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="20dp">
 
-    <TextView
-        android:id="@+id/txtGameTitle"
+    <!-- Header Section Card -->
+    <com.google.android.material.card.MaterialCardView
+        style="@style/Widget.Material3.CardView.Elevated"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:textAppearance="?attr/textAppearanceTitleLarge"
-        android:textStyle="bold" />
+        android:stateListAnimator="@null"
+        app:cardBackgroundColor="@color/card_dark"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="0dp"
+        app:strokeColor="@color/green_primary"
+        app:strokeWidth="1dp">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/txtGameTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Game Details"
+                android:textColor="@color/white"
+                android:textColorHint="@color/text_secondary_dark"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Scrollable Transcript Container -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:clipToPadding="false">
+        android:clipToPadding="false"
+        android:scrollbars="vertical">
 
         <LinearLayout
             android:id="@+id/transcriptContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:orientation="vertical" />
+            android:orientation="vertical"
+            android:paddingVertical="8dp" />
+
     </androidx.core.widget.NestedScrollView>
 
 </LinearLayout>
