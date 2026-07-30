@@ -67,7 +67,6 @@
                 android:textColor="#E0E0E0"
                 android:textSize="15sp" />
 
-            <!-- Command Bar Input -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -114,7 +113,6 @@
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Bottom Action Button -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnToggleTheme"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"

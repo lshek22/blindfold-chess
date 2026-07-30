@@ -315,12 +315,7 @@
                     android:letterSpacing="0.08"
                     android:layout_marginBottom="8dp" />
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Half-moves (e.g. 0)"
-                    app:hintTextColor="#8E8E93"
-                    app:boxBackgroundMode="none">
+
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/edtHalfMoveCount"
@@ -330,7 +325,6 @@
                         android:text="0"
                         android:textColor="#FFFFFF"
                         android:textSize="16sp" />
-                </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
