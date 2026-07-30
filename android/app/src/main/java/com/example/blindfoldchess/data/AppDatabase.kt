@@ -5,8 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-// Bumped again: GameHistoryEntity gained diagramPlies to remember where
-// inline board diagrams were inserted during move entry.
+
 @Database(entities = [GameHistoryEntity::class], version = 4, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
